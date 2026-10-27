@@ -82,9 +82,10 @@ END DO
 !           --------- ------------- -----
 
 DO jr = 1, jpnr
+
   isp = nspi(jr,1)
   IF ( isp == nspi(jr,2) ) THEN
-    DO jl = 1, n_points
+   DO jl = 1, n_points
       qa(jl,isp) = qa(jl,isp) + 2.0 * rk(jl,jr)
     END DO
   END IF

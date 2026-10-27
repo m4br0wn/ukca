@@ -184,7 +184,7 @@ USE ukca_constants,  ONLY: c_br, c_brcl, c_bro, c_brono2, c_buoo,              &
     c_txcarb22, c_ru12pan, c_rtn26pan, c_aroh14, c_aroh17, c_arnoh14,          &
     c_arnoh17, c_anhy, c_cri,c_dhpcarb9, c_hpucarb12, c_hucarb9, c_iepox,      &
     c_hmml, c_dhpr12ooh, c_dhcarb9, c_ru12no3, c_ru10no3, c_dhpr12o2,          &
-    c_ru10ao2, c_maco3
+    c_ru10ao2, c_maco3, c_o2, c_n2
 
 
 USE asad_mod,        ONLY: advt, nadvt, speci, jpctr, jpspec
@@ -286,6 +286,8 @@ WHERE (advt == 'NALD      ') c_species = c_nald
 WHERE (advt == 'HCOOH     ') c_species = c_hcooh
 WHERE (advt == 'MeCO3H    ') c_species = c_meco3h
 WHERE (advt == 'MeCO2H    ') c_species = c_meco2h
+WHERE (advt == 'O2        ') c_species = c_o2
+WHERE (advt == 'N2        ') c_species = c_n2 
 WHERE (advt == 'SO2       ') c_species = c_so2
 WHERE (advt == 'SO3       ') c_species = c_so3
 WHERE (advt == 'DMS       ') c_species = c_dms
