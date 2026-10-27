@@ -2269,6 +2269,10 @@ IF (ukca_config%l_ukca_chem) THEN
         ! SO2 wet oxidation in UKCA, and H2SO4 updating done in MODE
         wetox_in_aer = 0
         uph2so4inaer = 1
+        ! No SOx in Mars chemistry
+      ELSE IF (ukca_config%l_ukca_marschem) THEN
+        wetox_in_aer = 0
+        uph2so4inaer = 0
       ELSE                        ! No SO2 oxidation in UKCA chemistry
         wetox_in_aer = 1          ! Sulphur emissions are still needed
         uph2so4inaer = 1

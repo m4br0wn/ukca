@@ -83,6 +83,10 @@ INTEGER, SAVE, PUBLIC :: n_co       ! CO
 INTEGER, SAVE, PUBLIC :: n_n2o      ! N2O
 INTEGER, SAVE, PUBLIC :: n_mebr     ! CH3Br
 INTEGER, SAVE, PUBLIC :: n_nh3      ! Ammonia
+! Mars scheme
+INTEGER, SAVE, PUBLIC :: n_n2 
+INTEGER, SAVE, PUBLIC :: n_o2 
+
 
 ! Index location in species array
 INTEGER, SAVE, PUBLIC :: nn_o3    ! Species numbers
@@ -135,6 +139,8 @@ INTEGER, SAVE, PUBLIC :: nn_tolp1
 INTEGER, SAVE, PUBLIC :: nn_cfcl3
 INTEGER, SAVE, PUBLIC :: nn_cf2cl2
 INTEGER, SAVE, PUBLIC :: nn_nh3
+INTEGER, SAVE, PUBLIC :: nn_n2
+INTEGER, SAVE, PUBLIC :: nn_o2
 
 ! Advected tracers
 REAL, SAVE, ALLOCATABLE, PUBLIC :: c_species(:)
@@ -362,6 +368,10 @@ WHERE (advt == 'MeSO     ') c_species = c_ch3so
 WHERE (advt == 'MeSO2    ') c_species = c_ch3so2
 WHERE (advt == 'MeSO3    ') c_species = c_ch3so3
 WHERE (advt == 'MSIA      ') c_species = c_msia
+! Mars scheme - O2 and N2 are trace gases
+WHERE (advt == 'N2        ') c_species = c_n2
+WHERE (advt == 'O2        ') c_species = c_o2
+
 ! CRI intermediates with direct analogues to other species have
 ! exact mass defined where relevant for dry deposition rates
 WHERE (advt == 'CARB7     ') c_species = c_hacet
@@ -601,6 +611,8 @@ n_cf2cl2 = 0  ! CFC-12
 n_cfcl3 = 0   ! CFC-11
 n_mebr = 0    ! CH3Br
 n_nh3 = 0
+n_n2  = 0     ! Mars
+n_o2  = 0     ! Mars
 
 !     Find tracer numbers
 
@@ -712,7 +724,11 @@ DO m=1,jpctr
     n_n2o = m
   CASE ('NH3       ')
     n_nh3 = m
-  END SELECT
+  CASE ('N2        ')
+    n_n2  = m
+  CASE ('O2        ')
+    n_o2  = m
+ END SELECT
 END DO
 DO i=1,jpctr
   IF ((advt(i) == 'Ox        ') .OR. (advt(i) == 'O3        '))                &
@@ -771,6 +787,8 @@ nn_hoipo2    = 0
 nn_homvko2   = 0
 nn_tolp1     = 0
 nn_nh3 = 0
+nn_n2  = 0  ! Mars
+nn_o2  = 0  ! Mars
 
 !     Find species numbers
 
@@ -876,7 +894,12 @@ DO m=1,jpspec
     nn_cf2cl2 = m
   CASE ('NH3       ')
     nn_nh3 = m
-  END SELECT
+  CASE ('N2        ')
+    nn_n2  = m
+  CASE ('O2        ')
+    nn_o2  = m
+ END SELECT
+
 END DO
 IF (printstatus > prstatus_oper) THEN
   CALL umPrint( 'Species indices:',src='ukca_cspecies')

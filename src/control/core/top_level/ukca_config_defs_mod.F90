@@ -358,7 +358,7 @@ ELSE IF (ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_strattrop .OR.       &
       em_chem_spec =                                                           &
            ['NO        ','CH4       ']
       ! tracers and reactions: 
-      n_chem_tracers  = 31   
+      n_chem_tracers  = 33   
       nr_therm       = 135
       nr_phot        = 30
     ELSE ! USING AEROSOL CHEMISTRY
@@ -369,7 +369,7 @@ ELSE IF (ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_strattrop .OR.       &
       em_chem_spec =                                                           &
            ['NO        ','CH4       ']
       ! tracers and reactions:
-      n_chem_tracers  = 31
+      n_chem_tracers  = 33
       n_aero_tracers  = 7
       nr_therm        = 149
       nr_phot         = 34

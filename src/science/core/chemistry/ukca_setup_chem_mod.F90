@@ -78,7 +78,6 @@ CHARACTER(LEN=*), PARAMETER :: RoutineName='UKCA_SETUP_CHEM'
 
 IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_in,zhook_handle)
 
-
 SELECT CASE (ukca_config%i_ukca_chem)
 
 CASE (i_ukca_chem_off)
@@ -292,14 +291,20 @@ CASE (i_ukca_chem_marschem)
   ! If aerosol chemistry on, add additional reactions.
   ! Not necessarily needed for Mars as no liquid H2O, but adding in anyway
   IF (ukca_config%l_ukca_chem_aero) THEN
-    ukca_config%l_ukca_achem     = .TRUE.
-    ukca_config%l_ukca_nr_aqchem = .TRUE.
+    CALL umPrint( 'Mars chem does not support aerosol chemistry',              &
+        src='ukca_setup_chem_mod')
+    cmessage='Unsupported option choice for aerosol chem'
+    errcode=ABS(ukca_config%i_ukca_chem)
+    CALL ereport('ukca_setup_chem',errcode,cmessage)
+
+    ! ukca_config%l_ukca_achem     = .TRUE.
+    ! ukca_config%l_ukca_nr_aqchem = .TRUE. 
   END IF
  
   IF (ukca_config%l_ukca_trophet) THEN
     CALL umPrint( 'Mars chem does not support trop het chem',                  &
         src='ukca_setup_chem_mod')
-    cmessage='Unsupported option choice'
+    cmessage='Unsupported option choice for tropospheric het chem'
     errcode=ABS(ukca_config%i_ukca_chem)
     CALL ereport('ukca_setup_chem',errcode,cmessage)
   END IF
@@ -357,10 +362,11 @@ END IF
 
 ! Check chemistry supports GLOMAP-mode
 IF (ukca_config%l_ukca_mode) THEN
-
    ! Newton Raphson
    ! Require that l_ukca_achem true or offline chemistry
+   ! Or if using Mars Chemistry
   IF (ukca_config%ukca_int_method == int_method_nr) THEN
+   IF (.NOT. ukca_config%i_ukca_chem == i_ukca_chem_marschem) THEN
     IF (.NOT. ukca_config%l_ukca_nr_aqchem) THEN
       CALL umPrint( 'Need aerosol chemistry on for '                           &
      // 'Glomap MODE',src='ukca_setup_chem_mod')
@@ -368,6 +374,7 @@ IF (ukca_config%l_ukca_mode) THEN
       errcode=2
       CALL ereport('ukca_setup_chem',errcode,cmessage)
     END IF
+   END IF ! Mars check
 
   ELSE IF (ukca_config%ukca_int_method == int_method_none) THEN
     IF (.NOT. (glomap_config%i_mode_setup == i_du_2mode)) THEN
@@ -391,7 +398,6 @@ IF (ukca_config%l_ukca_mode) THEN
       CALL ereport('ukca_setup_chem',errcode,cmessage)
     END IF
   END IF
-
 END IF
 
 ! Check specified DMS scheme logicals, only if marine DMS emissions are enabled

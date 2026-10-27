@@ -492,7 +492,6 @@ REAL, PARAMETER :: m_aromooh  = 130.0
 REAL, PARAMETER :: m_mekooh   = 104.0
 
 ! Mars using non-constant species: N2, O2, CO2
-
 REAL, PARAMETER :: m_n2      = 28.0
 REAL, PARAMETER :: m_o2      = 16.0  
 

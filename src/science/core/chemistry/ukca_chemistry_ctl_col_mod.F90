@@ -364,7 +364,6 @@ DO i=1,rows
     jspf = 0
     ! Loop through all species
     DO js = 1,jpspec
-
       ! First try to map with transported tracer
       DO jtr=1,jpctr
         IF (advt(jtr) == speci(js)) THEN
@@ -476,7 +475,9 @@ DO i=1,rows
 
         IF (uph2so4inaer == 1) THEN
           ! H2SO4 will be updated in MODE, so store old value here
-          IF (ukca_config%l_fix_ukca_h2so4_ystore) THEN
+          ! istore_h2so4 is only set if nr_aqchem is on
+          IF ((ukca_config%l_fix_ukca_h2so4_ystore) .AND.                      &
+           (ukca_config%l_ukca_nr_aqchem)) THEN
             ! primary array passed is zftr, so save this, NOT y
             ystore(kcs:kce) = zftr(kcs:kce,istore_h2so4)
           ELSE
