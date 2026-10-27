@@ -255,7 +255,7 @@ ELSE IF (ukca_config%l_ukca_offline_be) THEN
     'SO2_nat   ','BC_biomass','OM_biomass']
 
 ELSE IF (ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_strattrop .OR.       &
-         ukca_config%l_ukca_stratcfc) THEN
+         ukca_config%l_ukca_stratcfc .OR. ukca_config%l_ukca_marschem) THEN
 
   ! Stratospheric chemistry
   ! =======================
@@ -345,6 +345,35 @@ ELSE IF (ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_strattrop .OR.       &
 
   ELSE IF (ukca_config%l_ukca_stratcfc) THEN
     n_chem_tracers = 43
+
+  ! Mars chemistry
+  ! =======================
+  IF (ukca_config%l_ukca_marschem) THEN
+    IF (.NOT. ukca_config%l_ukca_achem) THEN ! NOT using aerosol chemistry
+       ! emissions:
+      n_chem_emissions = 2
+      n_3d_emissions = 0       ! no aircraft NOX
+      n_aero_tracers =  0
+      ALLOCATE(em_chem_spec(n_chem_emissions+n_3d_emissions))
+      em_chem_spec =                                                           &
+           ['NO        ','CH4       ']
+      ! tracers and reactions: 
+      n_chem_tracers  = 35   
+      nr_therm       = 135
+      nr_phot        = 30
+    ELSE ! USING AEROSOL CHEMISTRY
+       ! emissions:
+      n_chem_emissions = 2       ! em_chem_spec below
+      n_3d_emissions   = 0       ! volc SO2 & aircraft NOX
+      ALLOCATE(em_chem_spec(n_chem_emissions+n_3d_emissions))
+      em_chem_spec =                                                           &
+           ['NO        ','CH4        ']
+      ! tracers and reactions:
+      n_chem_tracers  = 35
+      n_aero_tracers  = 7
+      nr_therm        = 149
+      nr_phot         = 34
+    END IF
   END IF
   nr_therm       = 102        ! thermal reactions
   nr_phot        = 27         ! photolytic (ATA)

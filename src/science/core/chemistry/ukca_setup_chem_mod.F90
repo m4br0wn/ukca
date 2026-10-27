@@ -44,7 +44,7 @@ USE ukca_config_specification_mod, ONLY:                                       &
    i_ukca_chem_off, i_ukca_chem_trop, i_ukca_chem_raq,                         &
    i_ukca_chem_tropisop, i_ukca_chem_strattrop, i_ukca_chem_strat,             &
    i_ukca_chem_offline, i_ukca_chem_offline_be, i_ukca_chem_cristrat,          &
-   int_method_none, i_du_2mode
+   i_ukca_chem_marschem, int_method_none, i_du_2mode
 
 USE asad_mod, ONLY: jpctr, jpspec, jpbk, jptk, jppj, jphk, jpdd, jpdw,         &
                     jpcspf, jpnr
@@ -271,6 +271,27 @@ CASE (i_ukca_chem_cristrat)
     ukca_config%l_ukca_achem     = .TRUE.
     ukca_config%l_ukca_nr_aqchem = .TRUE.
 
+  ! Case select for Mars chemistry scheme
+CASE (i_ukca_chem_marschem)
+  ukca_config%l_ukca_chem     = .TRUE.
+  ukca_config%l_ukca_marschem = .TRUE.
+  ukca_config%l_ukca_advh2o   = .TRUE.
+  ukca_config%ukca_int_method = int_method_nr
+
+  ! If aerosol chemistry on, add additional reactions.
+  ! Not necessarily needed for Mars as no liquid H2O, but adding in anyway
+  IF (ukca_config%l_ukca_chem_aero) THEN
+    ukca_config%l_ukca_achem     = .TRUE.
+    ukca_config%l_ukca_nr_aqchem = .TRUE.
+ 
+  IF (ukca_config%l_ukca_trophet) THEN
+    CALL umPrint( 'Mars chem does not support trop het chem',                  &
+        src='ukca_setup_chem_mod')
+    cmessage='Unsupported option choice'
+    errcode=ABS(ukca_config%i_ukca_chem)
+    CALL ereport('ukca_setup_chem',errcode,cmessage)
+  END IF
+
   ELSE
      ! Can't have trophet reactions without aerosol chemistry
     IF (ukca_config%l_ukca_trophet) THEN
@@ -423,6 +444,9 @@ IF (PrintStatus >= PrStatus_Diag) THEN
   CALL umPrint(umMessage,src='ukca_setup_chem_mod')
   WRITE(umMessage,'(A,1X,L7)') 'l_ukca_cristrat  = ',                          &
     ukca_config%l_ukca_cristrat
+  CALL umPrint(umMessage,src='ukca_setup_chem_mod')
+  WRITE(umMessage,'(A,1X,L7)') 'l_ukca_marschem  = ',                          &
+    ukca_config%l_ukca_marschem
   CALL umPrint(umMessage,src='ukca_setup_chem_mod')
   WRITE(umMessage,'(A,1X,I5)') 'ukca_int_method  = ',                          &
     ukca_config%ukca_int_method

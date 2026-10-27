@@ -326,6 +326,7 @@ USE ukca_config_specification_mod, ONLY:                                       &
                                  i_ukca_chem_strat,                            &
                                  i_ukca_chem_offline,                          &
                                  i_ukca_chem_cristrat,                         &
+                                 i_ukca_chem_marschem,                         &
                                  i_age_reset_by_level,                         &
                                  i_age_reset_by_height,                        &
                                  i_light_param_off,                            &
@@ -507,7 +508,8 @@ IF ( ukca_config%i_ukca_chem == i_ukca_chem_strat .OR.                         &
      ukca_config%i_ukca_chem == i_ukca_chem_strattrop .OR.                     &
      ukca_config%i_ukca_chem == i_ukca_chem_tropisop .OR.                      &
      ukca_config%i_ukca_chem == i_ukca_chem_offline .OR.                       &
-     ukca_config%i_ukca_chem == i_ukca_chem_cristrat) THEN
+     ukca_config%i_ukca_chem == i_ukca_chem_cristrat .OR.                      &
+     ukca_config%i_ukca_chem == i_ukca_chem_marschem) THEN 
   ! check number of N-R iterations
   IF (ukca_config%nrsteps < 0 .OR. ukca_config%nrsteps > nrsteps_max) THEN
     WRITE(cmessage,'(2(A,1x,I0))') 'NRSTEPS is not in range - 0:',nrsteps_max, &
@@ -549,7 +551,8 @@ IF ( .NOT. (ukca_config%i_ukca_chem == i_ukca_chem_strat .OR.                  &
       ukca_config%i_ukca_chem == i_ukca_chem_strattrop .OR.                    &
       ukca_config%i_ukca_chem == i_ukca_chem_tropisop .OR.                     &
       ukca_config%i_ukca_chem == i_ukca_chem_offline .OR.                      &
-      ukca_config%i_ukca_chem == i_ukca_chem_cristrat)) THEN
+      ukca_config%i_ukca_chem == i_ukca_chem_cristrat .OR.                     &
+      ukca_config%i_ukca_chem == i_ukca_chem_marschem )) THEN
   ! check settings in quasi-Newton step to ensure they are sensible
   IF (ukca_config%l_ukca_asad_columns) THEN
     errcode = 16
@@ -563,8 +566,9 @@ IF ( .NOT. (ukca_config%i_ukca_chem == i_ukca_chem_strat .OR.                  &
       ukca_config%i_ukca_chem == i_ukca_chem_strattrop .OR.                    &
       ukca_config%i_ukca_chem == i_ukca_chem_tropisop .OR.                     &
       ukca_config%i_ukca_chem == i_ukca_chem_offline .OR.                      &
-      ukca_config%i_ukca_chem == i_ukca_chem_cristrat)) THEN
-  IF (ukca_config%l_ukca_debug_asad) THEN
+      ukca_config%i_ukca_chem == i_ukca_chem_cristrat .OR.                     &
+      ukca_config%i_ukca_chem == i_ukca_chem_marschem )) THEN
+ IF (ukca_config%l_ukca_debug_asad) THEN
     errcode = 17
     WRITE(cmessage,'(A,L1)')                                                   &
          ' ASAD debugging can only be for Newton-Raphson schemes: ',           &
@@ -575,7 +579,8 @@ END IF
 ! Check validity of top boundary option for a stratospheric scheme
 IF ((ukca_config%i_ukca_chem == i_ukca_chem_strattrop .OR.                     &
      ukca_config%i_ukca_chem == i_ukca_chem_strat .OR.                         &
-     ukca_config%i_ukca_chem == i_ukca_chem_cristrat) .AND.                    &
+     ukca_config%i_ukca_chem == i_ukca_chem_cristrat .OR.                      &
+     ukca_config%i_ukca_chem == i_ukca_chem_marschem ) .AND.                   &
     (ukca_config%i_ukca_topboundary < 0 .OR.                                   &
      ukca_config%i_ukca_topboundary > 4)) THEN
   WRITE(cmessage,'(A,I0,A)')                                                   &
@@ -596,7 +601,8 @@ END IF
 
 IF ((ukca_config%i_ukca_topboundary == i_top_BC_H2O) .AND.                     &
     (ukca_config%i_ukca_chem /= i_ukca_chem_strat) .AND.                       &
-    (ukca_config%i_ukca_chem /= i_ukca_chem_strattrop)) THEN
+    (ukca_config%i_ukca_chem /= i_ukca_chem_strattrop) .AND.                   &
+    (ukca_config%i_ukca_chem /= i_ukca_chem_marschem) ) THEN
   ! Cannot conserve hydrogen because H, OH, or H2 don't exist
   cmessage='Cannot impose top boundary for H2O if H, OH, or H2 do not exist.'
   errcode = 20
@@ -606,7 +612,8 @@ END IF
 IF ((ukca_config%i_ukca_topboundary >= i_top_BC) .AND.                         &
     (ukca_config%i_ukca_chem /= i_ukca_chem_strattrop) .AND.                   &
     (ukca_config%i_ukca_chem /= i_ukca_chem_strat) .AND.                       &
-    (ukca_config%i_ukca_chem /= i_ukca_chem_cristrat)) THEN
+    (ukca_config%i_ukca_chem /= i_ukca_chem_cristrat) .AND.                    &
+    (ukca_config%i_ukca_chem /= i_ukca_chem_marschem)) THEN
   ! Cannot impose top boundary condition for species
   cmessage='Can only impose top boundary for O3, NO and CO in' // newline //   &
            'schemes with stratospheric chemistry'
@@ -697,7 +704,8 @@ IF ( ukca_config%i_ukca_chem == i_ukca_chem_strat      .OR.                    &
      ukca_config%i_ukca_chem == i_ukca_chem_strattrop  .OR.                    &
      ukca_config%i_ukca_chem == i_ukca_chem_tropisop   .OR.                    &
      ukca_config%i_ukca_chem == i_ukca_chem_offline    .OR.                    &
-     ukca_config%i_ukca_chem == i_ukca_chem_cristrat ) THEN
+     ukca_config%i_ukca_chem == i_ukca_chem_cristrat   .OR.                    &
+     ukca_config%i_ukca_chem == i_ukca_chem_marschem) THEN
   IF ( ukca_config%i_ukca_chem_version < 107 ) THEN
     cmessage = 'Value of i_ukca_chem_version cannot be less than 107.'
     errcode  = 30
@@ -723,7 +731,8 @@ END IF
 IF (ukca_config%l_ukca_het_psc .AND.                                           &
     ukca_config%i_ukca_chem /= i_ukca_chem_strattrop .AND.                     &
     ukca_config%i_ukca_chem /= i_ukca_chem_strat .AND.                         &
-    ukca_config%i_ukca_chem /= i_ukca_chem_cristrat) THEN
+    ukca_config%i_ukca_chem /= i_ukca_chem_cristrat .AND.                      &
+    ukca_config%i_ukca_chem /= i_ukca_chem_marschem) THEN
   cmessage = 'PSC heterogeneous chemistry requires a scheme with'              &
              // newline // 'stratospheric chemistry'
   errcode  = 33
@@ -769,7 +778,8 @@ IF ((.NOT. ukca_config%l_use_gridbox_mass) .AND.                               &
     ((ukca_config%i_ukca_chem /= i_ukca_chem_off .AND.                         &
       ukca_config%l_enable_diag_um) .OR.                                       &
      ((ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_stratcfc .OR.          &
-      ukca_config%l_ukca_strattrop .OR. ukca_config%l_ukca_cristrat) .AND.     &
+      ukca_config%l_ukca_strattrop .OR. ukca_config%l_ukca_cristrat .OR.       &
+      ukca_config%l_ukca_marschem) .AND.                                       &
       .NOT. ukca_config%l_ukca_emissions_off))) THEN
   cmessage = 'Cannot run without mass of air in grid box as it is needed'      &
              // newline // 'for UM diagnostics and/or a stratospheric'         &

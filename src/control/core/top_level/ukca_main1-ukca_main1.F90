@@ -928,7 +928,8 @@ IF (l_first_call) THEN
 
     ! set constants needed in sulphur chemistry
     IF (ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_strattrop .OR.        &
-        ukca_config%l_ukca_stratcfc .OR. ukca_config%l_ukca_cristrat) THEN
+        ukca_config%l_ukca_stratcfc .OR. ukca_config%l_ukca_cristrat .OR.      &
+        ukca_config%l_ukca_marschem) THEN
       lambda_aitken = 3.0/rho_so4 / chi /                                      &
                      rad_ait * EXP(-2.5 * (LOG(sigma)**2))                     &
                      * 0.01 ! revert from m^-1 to cm^2/cm^3

@@ -75,7 +75,7 @@ INTEGER, PARAMETER :: ol  = 16  ! offline scheme
 INTEGER, PARAMETER :: ti  = 32  ! troposphere-isoprene scheme
 INTEGER, PARAMETER :: cs  = 64  ! Common Representative Intermediates +
                                 ! Stratosphere scheme
-
+INTEGER, PARAMETER :: mc  = 128 ! mars chemistry scheme
 ! CRI-Strat 2 (CS2) is an update to CRI-Strat (CS) which is turned on if
 ! CRI-Strat is selected and i_ukca_chem_version >= 119
 
@@ -103,7 +103,7 @@ INTEGER, PARAMETER :: rm = 1024   ! Used to remove reactions that existed at
                                   ! later ones
 
 ! Define size of master chemistry
-INTEGER, PARAMETER :: n_chch_master = 357 ! number of known species
+INTEGER, PARAMETER :: n_chch_master = 377 ! number of known species
 INTEGER, PARAMETER :: n_het_master  =  18 ! number of heterogeneous reactions
 INTEGER, PARAMETER :: n_dry_master  = 162 ! number of dry deposition reactions
 INTEGER, PARAMETER :: n_wet_master  = 160 ! number of wet deposition reactions
@@ -174,13 +174,13 @@ IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_in,zhook_handle)
 ! dry deposition flag, wet deposition flag, scheme,
 ! selection qualifier, deselection / disqualifier, (UM) version when entered
 ! into the master mechanism.
-chch_defs_master(1:149)=[                                                      &
+chch_defs_master(1:169)=[                                                      &
 !   1
-chch_t1( 1,'O(3P)     ',1,'TR        ','Ox        ',0,0,s+st+cs,0,0,107),      &
+chch_t1( 1,'O(3P)     ',1,'TR        ','Ox        ',0,0,s+st+cs+mc,0,0,107),   &
 !   1
 chch_t1( 1,'O(3P)     ',1,'SS        ','Ox        ',0,0,ti+t+r,0,0,107),       &
 !   2
-chch_t1( 2,'O(1D)     ',1,'SS        ','Ox        ',0,0,ti+s+t+st+r+cs,        &
+chch_t1( 2,'O(1D)     ',1,'SS        ','Ox        ',0,0,ti+s+t+st+r+cs+mc,     &
                                                                 0,0,107),      &
 !   3 DD:  1,
 chch_t1( 3,'O3        ',1,'TR        ','Ox        ',1,0,ti+s+t+st+r+cs,        &
@@ -194,8 +194,10 @@ chch_t1( 3,'O3        ',1,'TR        ','Ox        ',1,1,ti+st+s+t+r+cs,        &
                                                                 a,0,107),      &
 !   3
 chch_t1( 3,'O3        ',1,'CF        ','Ox        ',0,0,ol,0,0,107),           &
+!   3
+chch_t1( 3,'O3        ',1,'TR        ','Ox        ',0,0,mc,0,0,107),           &
 !   4
-chch_t1( 4,'N         ',1,'TR        ','NOx       ',0,0,s+st+cs,0,0,107),      &
+chch_t1( 4,'N         ',1,'TR        ','NOx       ',0,0,s+st+cs+mc,0,0,107),   &
 ! NOx is emitted as NO2 for all schemes except RAQ which causes ozone
 ! depletion (NO + O3 -> NO2 + O2).
 ! This could be made consistent. Also RAQ scheme does not do dry deposition of
@@ -204,28 +206,33 @@ chch_t1( 4,'N         ',1,'TR        ','NOx       ',0,0,s+st+cs,0,0,107),      &
 chch_t1( 5,'NO        ',1,'TR        ','NOx       ',1,0,s+st+cs,0,0,107),      &
 chch_t1( 5,'NO        ',1,'TR        ','NOx       ',1,0,ti+t,0,0,107),         &
 !   5                 (10)
-chch_t1( 5,'NO        ',1,'TR        ','NOx       ',0,0,r,0,0,107),            &
+chch_t1( 5,'NO        ',1,'TR        ','NOx       ',0,0,r+mc,0,0,107),         &
 !   6 DD:  3,WD:  2,
 ! No dry deposition for NO3 in RAQ/S/T schemes.
 chch_t1( 6,'NO3       ',1,'TR        ','NOx       ',0,1,r+s+t,0,0,107),        &
 chch_t1( 6,'NO3       ',1,'TR        ','NOx       ',1,1,ti+st+cs,0,0,107),     &
 chch_t1( 6,'NO3       ',1,'CF        ','NOx       ',0,0,ol,0,0,107),           &
+chch_t1( 6,'NO3       ',1,'TR        ','NOx       ',0,0,mc,0,0,107),           &
 !   7 DD:  4,
 chch_t1( 7,'NO2       ',1,'TR        ','NOx       ',1,0,ti+s+st+cs,0,0,107),   &
 chch_t1( 7,'NO2       ',1,'TR        ','NOx       ',1,0,t+r,0,0,107),          &
+chch_t1( 7,'NO2       ',1,'TR        ','NOx       ',0,0,mc,0,0,107),           &
 ! No dry deposition for N2O5 in R/S/T schemes
 !   8 DD:  5,WD:  3,
 chch_t1( 8,'N2O5      ',2,'TR        ','          ',0,1,r+s+t,0,0,107),        &
 chch_t1( 8,'N2O5      ',2,'TR        ','          ',1,1,ti+st+cs,0,0,107),     &
+chch_t1( 8,'N2O5      ',2,'TR        ','          ',0,0,mc,0,0,107),           &
 !   9 DD:  6,WD:  4,
 ! No dry deposition for HO2NO2 in R and T schemes
 chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',0,1,r+t,0,0,107),          &
 chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',1,1,ti+s+st+cs,0,0,107),   &
+chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  10 DD:  7,WD:  5,   (20)
 chch_t1(10,'HONO2     ',1,'TR        ','          ',1,1,ti+s+t+st+r+cs,        &
                                                                 0,0,107),      &
+chch_t1(10,'HONO2     ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  11 DD:  8,WD:  6,
-chch_t1(11,'H2O2      ',1,'TR        ','          ',1,1,ti+s+t+st+ol+r+cs,     &
+chch_t1(11,'H2O2      ',1,'TR        ','          ',1,1,ti+s+t+st+ol+r+cs+mc,  &
                                                                    0,0,107),   &
 !  12
 ! Dry deposition of CH4 not enabled in S and ST schemes.
@@ -234,19 +241,22 @@ chch_t1(12,'CH4       ',1,'TR        ','          ',0,0,s+st+cs,0,ce,107),     &
 chch_t1(12,'CH4       ',1,'TR        ','          ',1,0,ti+t+r,0,ce,107),      &
 !  12
 ! Dry deposition of CH4 not enabled in S and CS schemes.
-chch_t1(12,'CH4       ',1,'TR        ','          ',0,0,s+cs,ce,0,107),        &
+chch_t1(12,'CH4       ',1,'TR        ','          ',0,0,s+cs+mc,ce,0,107),     &
 !  12 DD:  9,
 ! Dry deposition of CH4 enabled in TI, T, ST and R schemes.
 chch_t1(12,'CH4       ',1,'TR        ','          ',1,0,ti+t+st+r,ce,0,107),   &
 !  13 DD: 10,
-chch_t1(13,'CO        ',1,'TR        ','          ',1,0,ti+s+t+st+r+cs,        &
+chch_t1(13,'CO        ',1,'TR        ','          ',1,0,ti+s+t+st+r+cs+mc,     &
                                                                 0,0,107),      &
+chch_t1(13,'CO        ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  14 DD: 11,WD:  7,
 ! No dry deposition for HCHO in S/T/R schemes
 chch_t1(14,'HCHO      ',1,'TR        ','          ',0,1,s+t+r,0,0,107),        &
 chch_t1(14,'HCHO      ',1,'TR        ','          ',1,1,ti+st+cs,0,0,107),     &
+chch_t1(14,'HCHO      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  15        WD:  8,
 chch_t1(15,'MeOO      ',1,'TR        ','          ',0,1,ti+s,0,0,107),         &
+chch_t1(15,'MeOO      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 chch_t1(15,'MeOO      ',1,'SS        ','          ',0,1,t+r,0,0,107),          &
 chch_t1(15,'MeOO      ',1,'TR        ','          ',0,1,st,0,rn+rp,107),       &
 ! Select 'OO' type MeOO in ST mechanism if RN or RP == T
@@ -255,29 +265,31 @@ chch_t1(15,'MeOO      ',1,'OO        ','          ',0,1,st+cs,rn+rp,0,107),    &
 !  16 DD: 12,WD:  9,
 chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,1,ti+s+t+st+r+cs,        &
     0,0,107),                                                                  &
+chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  17
-chch_t1(17,'H         ',1,'TR        ','HOx       ',0,0,s+st+cs,0,0,107),      &
+chch_t1(17,'H         ',1,'TR        ','HOx       ',0,0,s+st+cs+mc,0,0,107),   &
 !  18
 ! No water in RAQ scheme? I presume H2O is implicit.
-chch_t1(18,'H2O       ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
+chch_t1(18,'H2O       ',1,'TR        ','          ',0,0,s+st+cs+mc,0,0,107),   &
 !  18
 chch_t1(18,'H2O       ',1,'CF        ','          ',0,0,ti+t+r,0,0,107),       &
 !  19
-chch_t1(19,'OH        ',1,'TR        ','HOx       ',0,0,ti+s+st+cs,0,0,107),   &
+chch_t1(19,'OH        ',1,'TR        ','HOx       ',0,0,ti+s+st+cs+mc,0,0,107),&
 chch_t1(19,'OH        ',1,'SS        ','HOx       ',0,0,t+r,0,0,107),          &
 chch_t1(19,'OH        ',1,'CF        ','HOx       ',0,0,ol,0,0,107),           &
 !  20        WD: 10,
 chch_t1(20,'HO2       ',1,'TR        ','HOx       ',0,1,ti+s+st+cs,0,0,107),   &
+chch_t1(20,'HO2       ',1,'TR        ','HOx       ',0,0,mc,0,0,107),           &
 chch_t1(20,'HO2       ',1,'SS        ','HOx       ',0,1,t+r,0,0,107),          &
 chch_t1(20,'HO2       ',1,'CF        ','HOx       ',0,0,ol,0,0,107),           &
 !  21
-chch_t1(21,'Cl        ',1,'TR        ','Clx       ',0,0,s+st+cs,0,0,107),      &
+chch_t1(21,'Cl        ',1,'TR        ','Clx       ',0,0,s+st+cs+mc,0,0,107),   &
 !  22
-chch_t1(22,'Cl2O2     ',1,'TR        ','Clx       ',0,0,s+st+cs,0,0,107),      &
+chch_t1(22,'Cl2O2     ',1,'TR        ','Clx       ',0,0,s+st+cs+mc,0,0,107),   &
 !  23
-chch_t1(23,'ClO       ',1,'TR        ','Clx       ',0,0,s+st+cs,0,0,107),      &
+chch_t1(23,'ClO       ',1,'TR        ','Clx       ',0,0,s+st+cs+mc,0,0,107),   &
 !  24
-chch_t1(24,'OClO      ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
+chch_t1(24,'OClO      ',1,'TR        ','          ',0,0,s+st+cs+mc,0,0,107),   &
 !  25
 chch_t1(25,'Br        ',1,'TR        ','Brx       ',0,0,s+st+cs,0,0,107),      &
 !  26
@@ -287,17 +299,20 @@ chch_t1(27,'BrCl      ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
 !  28        WD: 11,
 chch_t1(28,'BrONO2    ',1,'TR        ','          ',0,1,s+st+cs,0,0,107),      &
 !  29
-chch_t1(29,'N2O       ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
+chch_t1(29,'N2O       ',1,'TR        ','          ',0,0,s+st+cs+mc,0,0,107),   &
 !  30 DD: 13,WD: 12,   (50)
 chch_t1(30,'HCl       ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
+chch_t1(30,'HCl       ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  31 DD: 14,WD: 13,
 chch_t1(31,'HOCl      ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
+chch_t1(31,'HOCl      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  32 DD: 15,WD: 14,
 chch_t1(32,'HBr       ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
 !  33 DD: 16,WD: 15,
 chch_t1(33,'HOBr      ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
 !  34        WD: 16,
 chch_t1(34,'ClONO2    ',1,'TR        ','          ',0,1,s+st+cs,0,0,107),      &
+chch_t1(34,'ClONO2    ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  35
 chch_t1(35,'CFCl3     ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
 !  36
@@ -306,6 +321,7 @@ chch_t1(36,'CF2Cl2    ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
 chch_t1(37,'MeBr      ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
 !  38 DD: 17,WD: 17,
 chch_t1(38,'HONO      ',1,'TR        ','          ',1,1,ti+t+st+cs,0,0,107),   &
+chch_t1(38,'HONO      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  39
 chch_t1(39,'C2H6      ',1,'TR        ','          ',0,0,ti+t+st+r+cs,          &
                                                               0,0,107),        &
@@ -383,7 +399,7 @@ chch_t1(54,'MeCOCH2OOH',1,'TR        ','          ',1,1,ti+t+st,0,0,107),      &
 !  55 DD: 25,
 chch_t1(55,'PPAN      ',1,'TR        ','          ',1,0,ti+t+st+cs,0,0,107),   &
 !  56
-chch_t1(56,'MeONO2    ',1,'TR        ','          ',0,0,ti+t+st+cs,0,0,107),   &
+chch_t1(56,'MeONO2    ',1,'TR        ','          ',0,0,ti+t+st+cs+mc,0,0,107),&
 !  57
 chch_t1(57,'C5H8      ',1,'TR        ','          ',0,0,ti+st+r+cs,0,0,107),   &
 !  58
@@ -430,7 +446,7 @@ chch_t1(70,'MeCO2H    ',1,'TR        ','          ',1,1,cs,0,0,107),           &
 !  71 DD: 37,
 ! Dry deposition for H2 in R scheme but not in other schemes
 ! H2 is prescribed at the surface. Could it become interactive?
-chch_t1(71,'H2        ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
+chch_t1(71,'H2        ',1,'TR        ','          ',0,0,s+st+cs+mc,0,0,107),   &
 !  71                 (120)
 chch_t1(71,'H2        ',1,'TR        ','          ',1,0,r,0,0,107),            &
 !  71
@@ -439,11 +455,12 @@ chch_t1(71,'H2        ',1,'CT        ','          ',0,0,ti+t,0,0,107),         &
 ! No dry deposition for MeOH in R scheme. No emissions of MeOH in other schemes.
 ! Note MeOH is emitted as NVOC in ST with aerosols.
 chch_t1(72,'MeOH      ',1,'TR        ','          ',1,1,ti+st,0,0,107),        &
+chch_t1(72,'MeOH      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 chch_t1(72,'MeOH      ',1,'TR        ','          ',0,1,r,0,0,107),            &
 !  72
 chch_t1(72,'MeOH      ',1,'TR        ','          ',1,1,cs,0,0,107),           &
 !  73
-chch_t1(73,'CO2       ',1,'CT        ','          ',0,0,ti+t+s+st+cs,          &
+chch_t1(73,'CO2       ',1,'CT        ','          ',0,0,ti+t+s+st+cs+mc,       &
                                                              0,ci,107),        &
 !  73
 ! Stratospheric chemical schemes are enabled to take 3D CO2 as input
@@ -451,17 +468,19 @@ chch_t1(73,'CO2       ',1,'CF        ','          ',0,0,s+st+cs,ci,0,111),     &
 !  74
 chch_t1(74,'O2        ',1,'CT        ','          ',0,0,ti+s+t+st+cs,          &
                                                               0,0,107),        &
+chch_t1(74,'O2        ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  75
 chch_t1(75,'N2        ',1,'CT        ','          ',0,0,ti+s+t+st+cs,          &
                                                               0,0,107),        &
+chch_t1(75,'N2        ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  76
 chch_t1(76,'DMS       ',1,'TR        ','          ',0,0,ti+s+st+ol+r+cs,       &
                                                                  a,0,107),     &
 !  77 DD: 39,WD: 31,
-chch_t1(77,'SO2       ',1,'TR        ','          ',1,1,ti+s+st+ol+r+cs,       &
+chch_t1(77,'SO2       ',1,'TR        ','          ',1,1,ti+s+st+ol+r+cs+mc,    &
                                                                  a,0,107),     &
 !  78 DD: 40,
-chch_t1(78,'H2SO4     ',1,'TR        ','          ',1,0,ti+s+st+ol+r+cs,       &
+chch_t1(78,'H2SO4     ',1,'TR        ','          ',1,0,ti+s+st+ol+r+cs+mc,    &
                                                                  a,0,107),     &
 !  79 DD: 41,
 chch_t1(79,'MSA       ',1,'TR        ','          ',0,0,s+st+r+cs,a,0,107),    &
@@ -472,14 +491,15 @@ chch_t1(80,'DMSO      ',1,'TR        ','          ',0,1,r,a,0,107),            &
 chch_t1(80,'DMSO      ',1,'TR        ','          ',1,1,ti+st+ol+cs,a,0,107),  &
 !  81 DD: 43,WD: 33,
 chch_t1(81,'NH3       ',1,'TR        ','          ',1,1,ti+st+r+cs,a,0,107),   &
+chch_t1(81,'NH3       ',1,'TR        ','          ',0,0,mc,a,0,107),           &
 !  82
-chch_t1(82,'CS2       ',1,'TR        ','          ',0,0,ti+s+st+cs,a,0,107),   &
+chch_t1(82,'CS2       ',1,'TR        ','          ',0,0,ti+s+st+cs+mc,a,0,107),&
 !  83
-chch_t1(83,'COS       ',1,'TR        ','          ',0,0,ti+s+st+cs,a,0,107),   &
+chch_t1(83,'COS       ',1,'TR        ','          ',0,0,ti+s+st+cs+mc,a,0,107),&
 !  84
-chch_t1(84,'H2S       ',1,'TR        ','          ',0,0,ti+s+st+cs,a,0,107),   &
+chch_t1(84,'H2S       ',1,'TR        ','          ',0,0,ti+s+st+cs+mc,a,0,107),&
 !  85                 (140)
-chch_t1(85,'SO3       ',1,'TR        ','          ',0,0,s+st+cs,a,0,107),      &
+chch_t1(85,'SO3       ',1,'TR        ','          ',0,0,s+st+cs+mc,a,0,107),   &
 !  86 DD: 44,
 chch_t1(86,'Monoterp  ',1,'TR        ','          ',1,0,ti+st+ol+r,a,0,107),   &
 !  87 DD: 45,WD: 34,
@@ -498,7 +518,7 @@ chch_t1(92,'HO2S      ',1,'SS        ','          ',0,1,t,0,0,107)             &
 
 
 ! Species definitions continued
-chch_defs_master(150:244)=[                                                    &
+chch_defs_master(170:263)=[                                                    &
 !  93
 chch_t1(93,'s-BuOO    ',1,'SS        ','          ',0,0,r,0,0,107),            &
 !  94
@@ -693,7 +713,7 @@ chch_t1(181,'RU10OOH   ',1,'TR        ','          ',1,1,cs,0,0,107)           &
 ]
 
 
-chch_defs_master(245:n_chch_master)=[                                          &
+chch_defs_master(264:n_chch_master)=[                                          &
 ! 182 DD: 94,WD: 69,
 chch_t1(182,'NRU14OOH  ',1,'TR        ','          ',1,1,cs,0,0,107),          &
 ! 183 DD: 95,WD: 70,
@@ -933,15 +953,15 @@ chch_t1(284,'SEC_ORG_I ',1,'TR        ','          ',1,1,st,a,0,132)           &
 ! product yield x 4, chemistry scheme, qualifier, disqualifier, version
 rath_defs_master(1:n_het_master)=[                                             &
 rath_t1(1,'ClONO2    ','H2O       ','HOCl      ','HONO2     ','          ',    &
-'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs,hp,0,107),                   &
+'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs+mc,hp,0,107),                &
 rath_t1(2,'ClONO2    ','HCl       ','Cl        ','Cl        ','HONO2     ',    &
-'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs,hp,0,107),                   &
+'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs+mc,hp,0,107),                &
 rath_t1(3,'HOCl      ','HCl       ','Cl        ','Cl        ','H2O       ',    &
-'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs,hp,0,107),                   &
+'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs+mc,hp,0,107),                &
 rath_t1(4,'N2O5      ','H2O       ','HONO2     ','HONO2     ','          ',    &
-'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs,hp,0,107),                   &
+'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs+mc,hp,0,107),                &
 rath_t1(5,'N2O5      ','HCl       ','Cl        ','NO2       ','HONO2     ',    &
-'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs,hp,0,107),                   &
+'          ', 0.000, 0.000, 0.000, 0.000, s+st+cs+mc,hp,0,107),                &
 rath_t1(6,'ClONO2    ','HBr       ','BrCl      ','HONO2     ','          ',    &
 '          ', 0.000, 0.000, 0.000, 0.000, s+st+cs,eh,0,111),                   &
 rath_t1(7,'HOCl      ','HBr       ','BrCl      ','H2O       ','          ',    &
@@ -964,13 +984,13 @@ rath_t1(13,'N2O5      ','HBr       ','Br        ','NO2       ','HONO2     ',   &
 
 !HSO3+H2O2(aq)
 rath_t1(14,'SO2       ','H2O2      ','NULL0     ','          ','          ',   &
-'          ', 0.000, 0.000, 0.000, 0.000, ti+s+st+ol+r+cs,a,0,107),            &
+'          ', 0.000, 0.000, 0.000, 0.000, ti+s+st+ol+r+cs+mc,a,0,107),         &
 !HSO3+O3(aq)
 rath_t1(15,'SO2       ','O3        ','NULL1     ','          ','          ',   &
-'          ', 0.000, 0.000, 0.000, 0.000, ti+s+st+ol+r+cs,a,0,107),            &
+'          ', 0.000, 0.000, 0.000, 0.000, ti+s+st+ol+r+cs+mc,a,0,107),         &
 !HSO3+O3(aq)
 rath_t1(16,'SO2       ','O3        ','NULL2     ','          ','          ',   &
-'          ', 0.000, 0.000, 0.000, 0.000, ti+s+st+ol+r+cs,a,0,107),            &
+'          ', 0.000, 0.000, 0.000, 0.000, ti+s+st+ol+r+cs+mc,a,0,107),         &
 
 ! Tropospheric heterogeneous reactions
 rath_t1(17,'N2O5      ','          ','HONO2     ','          ','          ',   &
@@ -992,34 +1012,38 @@ ratj_t1(1,'EtOOH     ','PHOTON    ','MeCHO     ','HO2       ','OH        ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jmhp      ',ti+t+st+r+cs,0,0,107),&
 ! 2
 ratj_t1(2,'H2O2      ','PHOTON    ','OH        ','OH        ','          ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jh2o2     ',ti+s+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jh2o2     ',ti+s+t+st+r+cs+mc,      &
+                                                        ,0,0,107),             &
 ! 3
 ! This should produce H+ CHO -> H + HO2 + CO in ST scheme.
 ratj_t1(3,'HCHO      ','PHOTON    ','HO2       ','HO2       ','CO        ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhchoa    ',ti+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhchoa    ',ti+t+st+r+cs+mc,      &
+                                                        ,0,0,107),             &
 ! CS2
 ratj_t1(3,'HCHO      ','PHOTON    ','HO2       ','HO2       ','CO        ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jforma    ',cs,0,0,119),          &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jforma    ',cs+mc,0,0,119),       &
 ratj_t1(3,'HCHO      ','PHOTON    ','H         ','CO        ','HO2       ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jhchoa    ',s,0,0,107) ,          &
 ! 4
 ratj_t1(4,'HCHO      ','PHOTON    ','H2        ','CO        ','          ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jhchob    ',ti+s+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jhchob    ',ti+s+t+st+r+cs+mc,      &
+                                                        ,0,0,107),             &
 ! CS2
 ratj_t1(4,'HCHO      ','PHOTON    ','H2        ','CO        ','          ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jformb    ',cs,0,0,119),            &
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jformb    ',cs+mc,0,0,119),         &
 ! 5
 ! In S and ST, branching is assumed following JPL 2011. Update T, TI, and R?
 ! Added photolysis of HO2NO2 for CRI-Strat.
 ratj_t1(5,'HO2NO2    ','PHOTON    ','HO2       ','NO2       ','          ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jpna67    ',st+cs,0,0,107) ,      &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jpna67    ',st+cs+mc,0,0,107) ,   &
 ratj_t1(5,'HO2NO2    ','PHOTON    ','NO2       ','HO2       ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jpna67    ',s,0,0,107) ,          &
 ratj_t1(5,'HO2NO2    ','PHOTON    ','HO2       ','NO2       ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jpna      ',ti+t+r,0,0,107) ,     &
 ! 6
 ratj_t1(6,'HONO2     ','PHOTON    ','OH        ','NO2       ','          ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhono2    ',ti+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhono2    ',ti+t+st+r+cs+mc,      &
+                                                        ,0,0,107),             &
 ratj_t1(6,'HONO2     ','PHOTON    ','NO2       ','OH        ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jhono2    ',s,0,0,107) ,          &
 ! 7
@@ -1032,40 +1056,49 @@ ratj_t1(8,'MeCHO     ','PHOTON    ','CH4       ','CO        ','          ',    &
 ! 9
 ! THIS REACTION IS MISSING IN THE TROPOSPHERIC CHEMISTRY SCHEME.
 ratj_t1(9,'MeOOH     ','PHOTON    ','HO2       ','HCHO      ','OH        ',    &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jmhp      ',ti+st+r+cs,0,0,107) , &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jmhp      ',ti+st+r+cs+mc,      &
+                                                        ,0,0,107),             &
 ratj_t1(9,'MeOOH     ','PHOTON    ','HCHO      ','HO2       ','OH        ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jmhp      ',s,0,0,107) ,          &
 ! 10
 ratj_t1(10,'N2O5      ','PHOTON    ','NO3       ','NO2       ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jn2o5     ',ti+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jn2o5     ',ti+t+st+r+cs+mc,      &
+                                                        0,0,107),              &
 ratj_t1(10,'N2O5      ','PHOTON    ','NO2       ','NO3       ','          ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jn2o5     ',s,0,0,107) ,          &
 ! 11
 ratj_t1(11,'NO2       ','PHOTON    ','NO        ','O(3P)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jno2      ',ti+s+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jno2      ',ti+s+t+st+r+cs+mc,      &
+                                                        0,0,107),              &
 ! 12
 ratj_t1(12,'NO3       ','PHOTON    ','NO        ','O2        ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jno3a     ',ti+s+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jno3a     ',ti+s+t+st+r+cs+mc,      &
+                                                        0,0,107),              &
 ! 13
 ratj_t1(13,'NO3       ','PHOTON    ','NO2       ','O(3P)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jno3b     ',ti+s+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jno3b     ',ti+s+t+st+r+cs+mc,      &
+                                                        0,0,107),              &
 ! 14
 ! Missing in R, Added to CRI-Strat
 ratj_t1(14,'O2        ','PHOTON    ','O(3P)     ','O(3P)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jo2       ',ti+s+t+st+cs,0,0,107),  &
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jo2       ',ti+s+t+st+cs+mc,        &
+                                                        0,0,107),              &
 ! 15
 ratj_t1(15,'O3        ','PHOTON    ','O2        ','O(1D)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jo3a      ',ti+s+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jo3a      ',ti+s+t+st+r+cs+mc,      &
+                                                        0,0,107),              &
 ! 16
 ratj_t1(16,'O3        ','PHOTON    ','O2        ','O(3P)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.0,'jo3b      ',ti+s+t+st+r+cs,0,0,107),&
+     '          ', 0.0,0.0,0.0,0.0, 100.0,'jo3b      ',ti+s+t+st+r+cs+mc,      &
+                                                        0,0,107),              &
 ! 17
 ratj_t1(17,'PAN       ','PHOTON    ','MeCO3     ','NO2       ','          ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.0,'jpan      ',ti+t+st+r+cs,0,0,107) , &
 ! 18
 ! HONO not modelled in R
 ratj_t1(18,'HONO      ','PHOTON    ','OH        ','NO        ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhono     ',ti+t+st+cs,0,0,107) , &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhono     ',ti+t+st+cs+mc,        &
+                                                        0,0,107),              &
 ! 19
 ratj_t1(19,'EtCHO     ','PHOTON    ','EtOO      ','HO2       ','CO        ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jetcho    ',ti+t+st+cs,0,0,107) , &
@@ -1099,7 +1132,8 @@ ratj_t1(24,'PPAN      ','PHOTON    ','EtCO3     ','NO2       ','          ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jpan      ',ti+t+st+cs,0,0,107) , &
 ! 25
 ratj_t1(25,'MeONO2    ','PHOTON    ','HO2       ','HCHO      ','NO2       ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jmena     ',ti+t+st+cs,0,0,107) , &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jmena     ',ti+t+st+cs+mc,        &
+                                                        0,0,107),              &
 ! 26 Different products in TI and ST versus R.
 ratj_t1(26,'ISOOH     ','PHOTON    ','OH        ','MACR      ','HCHO      ',   &
      'HO2       ', 0.0,0.0,0.0,0.0, 100.000,'jmhp      ',ti+st,0,0,107) ,      &
@@ -1149,37 +1183,47 @@ ratj_t1(39,'BrONO2    ','PHOTON    ','BrO       ','NO2       ','          ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jbrnb     ',s+st+cs,0,0,107) ,    &
 ! 40
 ratj_t1(40,'O2        ','PHOTON    ','O(3P)     ','O(1D)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jo2b      ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jo2b      ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 41
 ratj_t1(41,'OClO      ','PHOTON    ','O(3P)     ','ClO       ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'joclo     ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'joclo     ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 42
 ratj_t1(42,'NO        ','PHOTON    ','N         ','O(3P)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jno       ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jno       ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 43
 ratj_t1(43,'HOBr      ','PHOTON    ','OH        ','Br        ','          ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jhobr     ',s+st+cs,0,0,107) ,    &
 ! 44
 ratj_t1(44,'N2O       ','PHOTON    ','N2        ','O(1D)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jn2o      ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jn2o      ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 45
 ratj_t1(45,'H2O       ','PHOTON    ','OH        ','H         ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jh2o      ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jh2o      ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 46
 ratj_t1(46,'ClONO2    ','PHOTON    ','Cl        ','NO3       ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jclna     ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jclna     ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 47
 ratj_t1(47,'ClONO2    ','PHOTON    ','ClO       ','NO2       ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jclnb     ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jclnb     ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 48
 ratj_t1(48,'HCl       ','PHOTON    ','H         ','Cl        ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhcl      ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhcl      ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 49
 ratj_t1(49,'HOCl      ','PHOTON    ','OH        ','Cl        ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhocl     ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jhocl     ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 50
 ratj_t1(50,'Cl2O2     ','PHOTON    ','Cl        ','Cl        ','O2        ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jcl2o2    ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jcl2o2    ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 51
 ratj_t1(51,'CFCl3     ','PHOTON    ','Cl        ','Cl        ','Cl        ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jcfcl3    ',s+st+cs,0,0,107) ,    &
@@ -1191,31 +1235,37 @@ ratj_t1(53,'MeBr      ','PHOTON    ','Br        ','H         ','          ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jmebr     ',s+st+cs,0,0,107) ,    &
 ! 54
 ratj_t1(54,'CH4       ','PHOTON    ','MeOO      ','H         ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jch4      ',s+st+cs,0,0,107) ,    &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jch4      ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 55
 ratj_t1(55,'CO2       ','PHOTON    ','CO        ','O(3P)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jco2      ',s+st+cs,0,0,107),     &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jco2      ',s+st+cs+mc,           &
+                                                        0,0,107),              &
 ! 56
 ! Reaction missing in the R scheme.
 ratj_t1(56,'HO2NO2    ','PHOTON    ','OH        ','NO3       ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jpna33    ',st+cs,0,0,107),       &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jpna33    ',st+cs+mc,             &
+                                                        0,0,107),              &
 ratj_t1(56,'HO2NO2    ','PHOTON    ','NO3       ','OH       ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jpna33    ',s,0,0,107),           &
 ! 57
 ratj_t1(57,'CS2       ','PHOTON    ','COS       ','SO2       ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jcs2      ',s+st+cs,a,0,107),     &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jcs2      ',s+st+cs+mc,           &
+                                                        a,0,107),              &
 ! 58
 ratj_t1(58,'COS       ','PHOTON    ','CO        ','SO2       ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jcos      ',s+st+cs,a,0,107),     &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jcos      ',s+st+cs+mc,           &
+                                                        a,0,107),              &
 ! 59
 ratj_t1(59,'H2SO4     ','PHOTON    ','SO3       ','OH        ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jh2so4    ',s+st+cs,a,0,107),     &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jh2so4    ',s+st+cs+mc,           &
+                                                        a,0,107),              &
 ! update for 121
 ratj_t1(59,'H2SO4     ','PHOTON    ','SO3       ','OH        ','H         ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jh2so4    ',s+st+cs,a,0,121),     &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jh2so4    ',s+st+cs+mc,a,0,121),  &
 ! 60
 ratj_t1(60,'SO3       ','PHOTON    ','SO2       ','O(3P)     ','          ',   &
-     '          ', 0.0,0.0,0.0,0.0, 100.000,'jso3      ',s+st+cs,a,0,107),     &
+     '          ', 0.0,0.0,0.0,0.0, 100.000,'jso3      ',s+st+cs+mc,a,0,107),  &
 ! 61
 ratj_t1(61,'MEK       ','PHOTON    ','MeCO3     ','EtOO      ','          ',   &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jaceto    ',r,0,0,107),           &
@@ -1565,7 +1615,7 @@ ratt_t1(1,'O(3P)     ','O2        ','O3        ','m         ',     0.0,        &
   6.00e-34, -2.50, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st+r,0,0,107),        &
 ! update for 121
 ratt_t1(1,'O(3P)     ','O2        ','O3        ','m         ',     0.0,        &
-  6.10e-34, -2.40, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st,0,0,121),          &
+  6.10e-34, -2.40, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st+mc,0,0,121),       &
 ! C
 ratt_t1(1,'O(3P)     ','O2        ','O3        ','m         ',     0.0,        &
   5.60e-34, -2.60, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, s,0,0,107) ,          &
@@ -1574,7 +1624,7 @@ ratt_t1(1,'O(3P)     ','O2        ','O3        ','          ',     0.0,        &
   6.00e-34, -2.60, 0.00,  0.00e+00,  0.0, 0.00, 0.0,0.000,cs,0,0,107),         &
 ! CS2 --> corrected for weighted average
 ratt_t1(1,'O(3P)     ','O2        ','O3        ','          ',     0.0,        &
-  5.68e-34, -2.60, 0.00,  0.00e+00,  0.0, 0.00, 0.0,0.000,cs,0,0,119),         &
+  5.68e-34, -2.60, 0.00,  0.00e+00,  0.0, 0.00, 0.0,0.000,cs+mc,0,0,119),      &
 ! T002 JPL 2011
 ! Missing in T and TI schemes. Note the discrepancy in low-pres rate
 ! coefficient
@@ -1582,7 +1632,7 @@ ratt_t1(2,'O(3P)     ','NO        ','NO2       ','m         ',     0.6,        &
   9.00e-32, -1.50, 0.00,  3.00e-11,  0.0, 0.0, 0.0, 0.0, st+r+cs,0,0,107),     &
 ! do not do for cs as covered by cs2 below (119) - update for 121
 ratt_t1(2,'O(3P)     ','NO        ','NO2       ','m         ',     0.6,        &
-  9.10e-32, -1.50, 0.00,  3.00e-11,  0.0, 0.0, 0.0, 0.0, st,0,0,121),          &
+  9.10e-32, -1.50, 0.00,  3.00e-11,  0.0, 0.0, 0.0, 0.0, st+mc,0,0,121),       &
 ratt_t1(2,'O(3P)     ','NO        ','NO2       ','m         ',     0.6,        &
   9.00e-31, -1.50, 0.00,  3.00e-11,  0.0, 0.0, 0.0, 0.0, s,0,0,107),           &
 ! Rate change in CS2
@@ -1590,10 +1640,10 @@ ratt_t1(2,'O(3P)     ','NO        ','NO2       ','m         ',     0.85,       &
   1.00e-31, -1.60, 0.00,  5.00e-11,  -0.3, 0.0, 0.0, 0.0, cs,0,0,119),         &
 ! T003 JPL 2011, Missing in T and TI scheme
 ratt_t1(3,'O(3P)     ','NO2       ','NO3       ','m         ',     0.6,        &
-  2.50e-31, -1.80, 0.00,  2.20e-11, -0.7, 0.0, 0.0, 0.0, st,0,0,107),          &
+  2.50e-31, -1.80, 0.00,  2.20e-11, -0.7, 0.0, 0.0, 0.0, st+mc,0,0,107),       &
 ! update for 121 - cs treated differently below
 ratt_t1(3,'O(3P)     ','NO2       ','NO3       ','m         ',     0.6,        &
-  3.40e-31, -1.60, 0.00,  2.30e-11, -0.2, 0.0, 0.0, 0.0, st,0,0,121),          &
+  3.40e-31, -1.60, 0.00,  2.30e-11, -0.2, 0.0, 0.0, 0.0, st+mc,0,0,121),       &
 ratt_t1(3,'O(3P)     ','NO2       ','NO3       ','m         ',     0.6,        &
   1.30e-31, -1.50, 0.00,  2.30e-11, 0.24, 0.0, 0.0, 0.0, s,0,0,107) ,          &
 !  T003 - Different rate in CRI
@@ -1607,7 +1657,7 @@ ratt_t1(4,'O(1D)     ','N2        ','N2O       ','m         ',     0.0,        &
   2.80e-36, -0.90, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st+cs,0,0,107),       &
 ! update for 121
 ratt_t1(4,'O(1D)     ','N2        ','N2O       ','m         ',    0.60,        &
-  2.80e-36, -0.90, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st+cs,0,0,121),       &
+  2.80e-36, -0.90, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st+cs+mc,0,0,121),    &
 ! JPL 2003
 ratt_t1(4,'O(1D)     ','N2        ','N2O       ','m         ',     0.0,        &
   3.50e-37, -0.60, 0.00,  0.00e+00,  0.0, 0.0, 0.0, 0.0, s,0,0,107) ,          &
@@ -1624,7 +1674,7 @@ ratt_t1(6,'ClO       ','ClO       ','Cl2O2     ','m         ',     0.6,        &
   1.60e-32, -4.50, 0.00,  3.00e-12, -2.0, 0.0, 0.0, 0.0, st+cs,0,0,107),       &
 ! update for 121
 ratt_t1(6,'ClO       ','ClO       ','Cl2O2     ','m         ',     0.6,        &
-  1.90e-32, -3.60, 0.00,  3.70e-12, -1.6, 0.0, 0.0, 0.0, st+cs,0,0,121),       &
+  1.90e-32, -3.60, 0.00,  3.70e-12, -1.6, 0.0, 0.0, 0.0, st+cs+mc,0,0,121),    &
 ratt_t1(6,'ClO       ','ClO       ','Cl2O2     ','m         ',     0.6,        &
   1.70e-32, -4.00, 0.00,  5.40e-12,  0.0, 0.0, 0.0, 0.0, s,0,0,107) ,          &
 ! T007 IUPAC 2005
@@ -1632,7 +1682,7 @@ ratt_t1(7,'Cl2O2     ','m         ','ClO       ','ClO       ',     0.5,        &
   3.70e-07,  0.00, 7690.0, 1.80e+14,  0.0,7690.0, 0.0, 0.0, st+cs,0,0,107),    &
 ! update for 121
 ratt_t1(7,'Cl2O2     ','m         ','ClO       ','ClO       ',    0.45,        &
-  3.70e-07,  0.00, 7690.0, 1.80e+14,  0.0,7690.0, 0.0, 0.0, st+cs,0,0,121),    &
+  3.70e-07,  0.00, 7690.0, 1.80e+14,  0.0,7690.0, 0.0, 0.0, st+cs+mc,0,0,121), &
 ratt_t1(7,'Cl2O2     ','m         ','ClO       ','ClO       ',     0.6,        &
   1.00e-06,  1.00, 8000.0, 4.80e+15,  0.00,8820.0, 0.0, 0.0, s,0,0,107) ,      &
 ! T008 JPL 2011
@@ -1640,7 +1690,7 @@ ratt_t1(8,'ClO       ','NO2       ','ClONO2    ','m         ',     0.6,        &
   1.80e-31, -3.40, 0.00,  1.50e-11,  0.0, 0.0, 0.0, 0.0, st+cs,0,0,107),       &
 ! update for 121
 ratt_t1(8,'ClO       ','NO2       ','ClONO2    ','m         ',     0.6,        &
-  1.80e-31, -2.00, 0.00,  1.00e-10, -1.0, 0.0, 0.0, 0.0, st+cs,0,0,121),       &
+  1.80e-31, -2.00, 0.00,  1.00e-10, -1.0, 0.0, 0.0, 0.0, st+cs+mc,0,0,121),    &
 ratt_t1(8,'ClO       ','NO2       ','ClONO2    ','m         ',   430.0,        &
   1.60e-31, -3.40, 0.00,  1.50e-11,  0.0, 0.0, 0.0, 0.0, s,0,0,107) ,          &
 ! T009 JPL 2011 22nd
@@ -1651,12 +1701,13 @@ ratt_t1(9,'H         ','O2        ','HO2       ','m         ',     0.6,        &
   5.70e-32, -1.60, 0.00,  7.50e-11,  0.0, 0.0, 0.0, 0.0, s,0,0,107),           &
 ! update for 121, include for s
 ratt_t1(9,'H         ','O2        ','HO2       ','m         ',     0.6,        &
-  5.30e-32, -1.80, 0.00,  9.50e-11,  0.4, 0.0, 0.0, 0.0, s+st+cs,0,0,121),     &
+  5.30e-32, -1.80, 0.00,  9.50e-11,  0.4, 0.0, 0.0, 0.0, s+st+cs+mc,0,0,121),  &
 ! T010 JPL 2011 see also asad_trimol.F90
 ratt_t1(10,'HO2       ','HO2       ','H2O2      ','O2        ',     0.0,       &
   2.10e-33,  0.00,-920.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st+r,0,0,107),       &
 ratt_t1(10,'HO2       ','HO2       ','H2O2      ','O2        ',     0.0,       &
-  1.90e-33,  0.00,-980.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, ti+s+t+cs,0,0,107),  &
+  1.90e-33,  0.00,-980.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, ti+s+t+cs+mc,        &
+                                                            ,0,0,107),         &
 ! T011 JPL 2011
 ratt_t1(11,'HO2       ','NO2       ','HO2NO2    ','m         ',     0.6,       &
   2.00e-31, -3.40, 0.00,  2.90e-12,  0.0, 0.0, 0.0, 0.0, st+r,0,0,107),        &
@@ -1667,7 +1718,7 @@ ratt_t1(11,'HO2       ','NO2       ','HO2NO2    ','m         ',     0.4,       &
   1.40e-31, -3.1, 0.00,  4.00e-12,  0.0, 0.0, 0.0, 0.0, cs,0,0,119),           &
 ! updates for 121
 ratt_t1(11,'HO2       ','NO2       ','HO2NO2    ','m         ',     0.6,       &
-  1.90e-31, -3.40, 0.00,  4.00e-12, -0.3, 0.0, 0.0, 0.0, st,0,0,121),          &
+  1.90e-31, -3.40, 0.00,  4.00e-12, -0.3, 0.0, 0.0, 0.0, st+mc,0,0,121),       &
 ! T012 IUPAC 2001
 ratt_t1(12,'HO2NO2    ','m         ','HO2       ','NO2       ',     0.5,       &
   4.10e-05,  0.00,10650.0, 4.80e+15,  0.0,11170.0,0.0, 0.0, t+st+r,0,0,107),   &
@@ -1681,19 +1732,19 @@ ratt_t1(12,'HO2NO2    ','m         ','NO2       ','HO2       ',    0.40,       &
   4.10e-05,  0.00,10650.0, 6.00e+15,  0.0,11170.0, 0.0, 0.0,cs,0,0,107),       &
 ! update for 121
 ratt_t1(12,'HO2NO2    ','m         ','NO2       ','HO2       ',    0.40,       &
-  4.10e-05,  0.00,10650.0, 6.00e+15,  0.0,11170.0, 0.0, 0.0,st,0,0,121),       &
+  4.10e-05,  0.00,10650.0, 6.00e+15,  0.0,11170.0, 0.0, 0.0,st+mc,0,0,121),    &
 !  T013
 ratt_t1(13,'OH        ','NO        ','HONO      ','m         ',  1420.0,       &
   7.40e-31, -2.40, 0.00,  3.30e-11, -0.3, 0.0, 0.0, 0.0, ti+t+cs,0,0,107),     &
 ! CS2 rate changed
 ratt_t1(13,'OH        ','NO        ','HONO      ','m         ',   0.81 ,       &
-  7.40e-31, -2.40, 0.00,  3.30e-11, -0.3, 0.0, 0.0, 0.0,      cs,0,0,119),     &
+  7.40e-31, -2.40, 0.00,  3.30e-11, -0.3, 0.0, 0.0, 0.0,   cs+mc,0,0,119),     &
 ! T013 JPL 2011
 ratt_t1(13,'OH        ','NO        ','HONO      ','m         ',     0.6,       &
   7.00e-31, -2.60, 0.00,  3.60e-11, -0.10, 0.0, 0.0, 0.0, st,0,0,107),         &
 ! T014 JPL 2011
 ratt_t1(14,'OH        ','NO2       ','HONO2     ','m         ',     0.6,       &
-  1.80e-30, -3.00, 0.00,  2.80e-11,  0.0, 0.0, 0.0, 0.0, st+r,0,0,107),        &
+  1.80e-30, -3.00, 0.00,  2.80e-11,  0.0, 0.0, 0.0, 0.0, st+r+mc,0,0,107),     &
 ratt_t1(14,'OH        ','NO2       ','HONO2     ','m         ',     0.4,       &
   3.30e-30, -3.00, 0.00,  4.10e-11,  0.0, 0.0, 0.0, 0.0, ti+s+t,0,0,107),      &
 !  T014 - Different rates in CRI
@@ -1704,7 +1755,7 @@ ratt_t1(14,'OH        ','NO2       ','HONO2     ','m         ',    0.41,       &
   3.20e-30, -4.50, 0.00, 3.00e-11, 0.00, 0.00, 0.0,0.000,cs,0,0,119),          &
 ! T015 JPL 2011 - Added to CS scheme for Stratosphere
 ratt_t1(15,'OH        ','OH        ','H2O2      ','m         ',     0.6,       &
-  6.90e-31, -1.00, 0.00,  2.60e-11,  0.0, 0.0, 0.0, 0.0, st+cs,0,0,107),       &
+  6.90e-31, -1.00, 0.00,  2.60e-11,  0.0, 0.0, 0.0, 0.0, st+cs+mc,0,0,107),    &
 ratt_t1(15,'OH        ','OH        ','H2O2      ','m         ',     0.5,       &
   6.90e-31, -0.80, 0.00,  2.60e-11,  0.0, 0.0, 0.0, 0.0, ti+s+t,0,0,107),      &
 ! T016 MCMv3.2
@@ -1755,7 +1806,7 @@ ratt_t1(22,'NO2       ','NO3       ','N2O5      ','m         ',     0.3,       &
   3.60e-30, -4.10, 0.00,  1.90e-12,  0.2, 0.0, 0.0, 0.0, ti+t+s+st+r,0,0,107), &
 ! updates for 121 - also do for s
 ratt_t1(22,'NO2       ','NO3       ','N2O5      ','m         ',     0.6,       &
-  2.40e-30, -3.00, 0.00,  1.60e-12,  0.1, 0.0, 0.0, 0.0, s+st,0,0,121),        &
+  2.40e-30, -3.00, 0.00,  1.60e-12,  0.1, 0.0, 0.0, 0.0, s+st+mc,0,0,121),     &
 !  T022 - Different rates in CRI
 ratt_t1(22,'NO2       ','NO3       ','N2O5      ','m         ',    0.60,       &
   2.20e-30, -3.90, 0.00, 1.50e-12, -0.70, 0.00, 0.0,0.000,cs,0,0,107),         &
@@ -1767,7 +1818,7 @@ ratt_t1(23,'N2O5      ','m         ','NO2       ','NO3       ',     0.3,       &
   1.30e-03, -3.50,11000.0, 9.70e+14,0.1,11080.0,0.0, 0.0,ti+s+t+st+r,0,0,107), &
 ! updates for 121 - now 0.35 for st
 ratt_t1(23,'N2O5      ','m         ','NO2       ','NO3       ',    0.35,       &
-  1.30e-03, -3.50,11000.0, 9.70e+14, 0.10, 11080.0,0.0, 0.0,st,0,0,121),       &
+  1.30e-03, -3.50,11000.0, 9.70e+14, 0.10, 11080.0,0.0, 0.0,st+mc,0,0,121),    &
 !  T023 - CRI
 ratt_t1(23,'N2O5      ','m         ','NO3       ','NO2       ',    0.35,       &
   1.30e-03, -3.50, 11000, 9.70e+14,  0.10, 11080, 0.0, 0.0,cs,0,0,107),        &
@@ -1777,13 +1828,13 @@ ratt_t1(24,'NO        ','NO        ','NO2       ','NO2       ',     0.0,       &
   3.30e-39,  0.00,-530.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, t+st,0,0,107),       &
 ! reaction with [O2] NOT [M] -> Should be factor 0.21 slower than ST rate
 ratt_t1(24,'NO        ','NO        ','NO2       ','NO2       ',     0.0,       &
-  6.93e-40,  0.00,-530.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, s+cs,0,0,107),       &
+  6.93e-40,  0.00,-530.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, s+cs+mc,0,0,107),    &
 ! T025
 ratt_t1(25,'SO2       ','OH        ','SO3       ','HO2       ',     0.6,       &
   3.00e-31, -3.30, 0.00,  1.50e-12,  0.0, 0.0, 0.0, 0.0, st+s,a,0,107),        &
 ! updates for 121 - do for st & s
 ratt_t1(25,'SO2       ','OH        ','SO3       ','HO2       ',     0.6,       &
-  2.90e-31, -4.10, 0.00,  1.70e-12,  0.2, 0.0, 0.0, 0.0, st+s,a,0,121),        &
+  2.90e-31, -4.10, 0.00,  1.70e-12,  0.2, 0.0, 0.0, 0.0, st+s+mc,a,0,121),     &
 ratt_t1(25,'SO2       ','OH        ','HO2       ','H2SO4     ',     0.6,       &
   3.00e-31, -3.30, 0.00,  1.50e-12,  0.0, 0.0, 0.0, 0.0, ti,a,0,107),          &
 ratt_t1(25,'SO2       ','OH        ','H2SO4     ','          ',     0.6,       &
@@ -1812,7 +1863,7 @@ ratt_t1(29,'MeO2NO2   ','m         ','MeOO      ','NO2       ',    0.36,       &
   9.00e-05,  0.0,  9690, 1.10e+16,  0.0, 10560, 0.0, 0.0,cs,0,0,107),          &
 !  T030 - Not sure why this is in CRI and not the others...
 ratt_t1(30,'O(3P)     ','SO2       ','SO3       ','m         ',     0.0,       &
-  4.00e-32,  0.0,  1000,  0.00e+00,  0.0, 0.00, 0.0,0.000,cs,a,0,107),         &
+  4.00e-32,  0.0,  1000,  0.00e+00,  0.0, 0.00, 0.0,0.000,cs+mc,a,0,107),      &
 !  T031
 ratt_t1(31,'C2H2      ','OH        ','HCOOH     ','CO        ',    0.37,       &
   1.82e-30, -1.50, 0.00, 3.64e-13,  0.0, 0.00, 0.0, 0.0,cs,0,0,107),           &
@@ -2603,18 +2654,22 @@ ratb_t1(16,'Cl        ','CH4       ','HCl       ','MeOO      ','          ',   &
 '          ',6.60e-12,  0.00, 1240.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! updates for 121 - do for s, st, & cs
 ratb_t1(16,'Cl        ','CH4       ','HCl       ','MeOO      ','          ',   &
-'          ',7.10e-12,  0.00, 1270.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',7.10e-12,  0.00, 1270.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,121),          &
 ! B017 IUPAC2006
 ratb_t1(17,'Cl        ','Cl2O2     ','Cl        ','Cl        ','Cl        ',   &
-'          ',7.60e-11,  0.00,  -65.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',7.60e-11,  0.00,  -65.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(17,'Cl        ','Cl2O2     ','Cl        ','Cl        ','Cl        ',   &
 '          ',1.00e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B018 JPL2011
 ratb_t1(18,'Cl        ','ClONO2    ','Cl        ','Cl        ','NO3       ',   &
-'          ',6.50e-12,  0.00, -135.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',6.50e-12,  0.00, -135.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),     &
 ! B019 JPL2011
 ratb_t1(19,'Cl        ','H2        ','HCl       ','H         ','          ',   &
-'          ',3.05e-11,  0.00, 2270.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',3.05e-11,  0.00, 2270.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(19,'Cl        ','H2        ','HCl       ','H         ','          ',   &
 '          ',3.90e-11,  0.00, 2310.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! updates for 121 - align s to st & cs
@@ -2622,15 +2677,18 @@ ratb_t1(19,'Cl        ','H2        ','HCl       ','H         ','          ',   &
 '          ',3.05e-11,  0.00, 2270.00, 0.00, 0.00, 0.00, 0.00,s,0,0,121),      &
 ! B020 JPL2011
 ratb_t1(20,'Cl        ','H2O2      ','HCl       ','HO2       ','          ',   &
-'          ',1.10e-11,  0.00,  980.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.10e-11,  0.00,  980.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),      &
 ! B021 JPL2011
 ratb_t1(21,'Cl        ','HCHO      ','HCl       ','CO        ','HO2       ',   &
-'          ',8.10e-11,  0.00,   30.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',8.10e-11,  0.00,   30.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(21,'Cl        ','HCHO      ','HCl       ','CO        ','HO2       ',   &
 '          ',8.20e-11,  0.00,   34.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B022 JPL2011
 ratb_t1(22,'Cl        ','HO2       ','ClO       ','OH        ','          ',   &
-'          ',3.65e-11,  0.00,  375.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',3.65e-11,  0.00,  375.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(22,'Cl        ','HO2       ','ClO       ','OH        ','          ',   &
 '          ',4.10e-11,  0.00,  450.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! updates for 121 - do for s, st, & cs
@@ -2638,36 +2696,44 @@ ratb_t1(22,'Cl        ','HO2       ','ClO       ','OH        ','          ',   &
 '          ',3.60e-11,  0.00,  375.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
 ! B023 JPL2011
 ratb_t1(23,'Cl        ','HO2       ','HCl       ','O2        ','          ',   &
-'          ',1.40e-11,  0.00, -270.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',1.40e-11,  0.00, -270.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(23,'Cl        ','HO2       ','HCl       ','O2        ','          ',   &
 '          ',1.80e-11,  0.00, -170.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B024 JPL2011
 ratb_t1(24,'Cl        ','HOCl      ','Cl        ','Cl        ','OH        ',   &
-'          ',3.40e-12,  0.00,  130.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',3.40e-12,  0.00,  130.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(24,'Cl        ','HOCl      ','Cl        ','Cl        ','OH        ',   &
 '          ',2.50e-12,  0.00,  130.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B025 JPL2011
 ratb_t1(25,'Cl        ','MeOOH     ','HCl       ','MeOO      ','          ',   &
-'          ',5.70e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',5.70e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),      &
 ! B026 JPL2011
 ratb_t1(26,'Cl        ','NO3       ','ClO       ','NO2       ','          ',   &
-'          ',2.40e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',2.40e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),      &
 ! B027 JPL2011
 ratb_t1(27,'Cl        ','O3        ','ClO       ','O2        ','          ',   &
-'          ',2.30e-11,  0.00,  200.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',2.30e-11,  0.00,  200.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(27,'Cl        ','O3        ','ClO       ','O2        ','          ',   &
 '          ',2.90e-11,  0.00,  260.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B028 JPL2011
 ratb_t1(28,'Cl        ','OClO      ','ClO       ','ClO       ','          ',   &
-'          ',3.40e-11,  0.00, -160.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',3.40e-11,  0.00, -160.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(28,'Cl        ','OClO      ','ClO       ','ClO       ','          ',   &
 '          ',3.20e-11,  0.00, -170.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B029 JPL2011
 ratb_t1(29,'ClO       ','ClO       ','Cl        ','Cl        ','O2        ',   &
-'          ',1.00e-12,  0.00, 1590.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.00e-12,  0.00, 1590.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),      &
 ! B030 JPL2011
 ratb_t1(30,'ClO       ','ClO       ','Cl        ','Cl        ','O2        ',   &
-'          ',3.00e-11,  0.00, 2450.00, 0.00, 0.00, 0.00,0.00,s+st+cs,0,0,107)  &
+'          ',3.00e-11,  0.00, 2450.00, 0.00, 0.00, 0.00,0.00,s+st+cs+mc,       &
+                                                                0,0,107),      &
 ]
 
 ! Start and end bounds for 2nd section of ratb_defs.
@@ -2677,7 +2743,8 @@ n_ratb_e = n_ratb_s+67
 ratb_defs_master(n_ratb_s:n_ratb_e) = [                                        &
 ! B031 JPL2011
 ratb_t1(31,'ClO       ','ClO       ','Cl        ','OClO      ','          ',   &
-'          ',3.50e-13,  0.00, 1370.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',3.50e-13,  0.00, 1370.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),      &
 ! B032 JPL2011
 ! Reaction not active - k=0 (see notes)
 ! updates for 121 - REMOVE for s, st, & cs
@@ -2687,16 +2754,19 @@ ratb_t1(33,'ClO       ','HO2       ','HOCl      ','O2        ','          ',   &
 '          ',4.60e-13,  0.00, -710.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B033 JPL2011
 ratb_t1(33,'ClO       ','HO2       ','HOCl      ','O2        ','          ',   &
-'          ',2.60e-12,  0.00, -290.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',2.60e-12,  0.00, -290.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ! B034 JPL2011
 ratb_t1(34,'ClO       ','MeOO      ','Cl        ','HCHO      ','HO2       ',   &
 '          ',3.30e-12,  0.00,  115.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! updates for 121 - do for s, st, & cs
 ratb_t1(34,'ClO       ','MeOO      ','Cl        ','HCHO      ','HO2       ',   &
-'          ',1.80e-12,  0.00,  600.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',1.80e-12,  0.00,  600.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,121),          &
 ! B035 JPL2011
 ratb_t1(35,'ClO       ','NO        ','Cl        ','NO2       ','          ',   &
-'          ',6.40e-12,  0.00, -290.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',6.40e-12,  0.00, -290.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(35,'ClO       ','NO        ','Cl        ','NO2       ','          ',   &
 '          ',6.20e-12,  0.00, -295.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B036 JPL2011
@@ -2704,7 +2774,8 @@ ratb_t1(36,'ClO       ','NO3       ','Cl        ','O2        ','NO2       ',   &
 '          ',4.60e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! updates for 121 - do for s, st, & cs
 ratb_t1(36,'ClO       ','NO3       ','Cl        ','O2        ','NO2       ',   &
-'          ',4.70e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',4.70e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,121),      &
 ! B037 JPL2011
 ! Reaction not active - k=0 (see notes
 ! updates for 121 - REMOVE for s, st, & cs
@@ -2753,15 +2824,18 @@ ratb_t1(42,'EtOO      ','NO3       ','MeCHO     ','HO2       ','NO2       ',   &
 '          ',2.30e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,cs,0,0,119),     &
 ! B043 JPL2011
 ratb_t1(43,'H         ','HO2       ','H2        ','O2        ','          ',   &
-'          ',6.90e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',6.90e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(43,'H         ','HO2       ','H2        ','O2        ','          ',   &
 '          ',2.35e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B044 JPL2011
 ratb_t1(44,'H         ','HO2       ','O(3P)     ','H2O       ','          ',   &
-'          ',1.62e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.62e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),      &
 ! B045 JPL2011
 ratb_t1(45,'H         ','HO2       ','OH        ','OH        ','          ',   &
-'          ',7.20e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',7.20e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                                0,0,107),      &
 ratb_t1(45,'H         ','HO2       ','OH        ','OH        ','          ',   &
 '          ',5.59e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B046 JPL2011
@@ -2769,10 +2843,12 @@ ratb_t1(46,'H         ','NO2       ','OH        ','NO        ','          ',   &
 '          ',4.00e-10,  0.00,  340.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! updates for 121 - do for s, st, & cs
 ratb_t1(46,'H         ','NO2       ','OH        ','NO        ','          ',   &
-'          ',1.35e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',1.35e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,121),      &
 ! B047 JPL2011
 ratb_t1(47,'H         ','O3        ','OH        ','O2        ','          ',   &
-'          ',1.40e-10,  0.00,  470.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.40e-10,  0.00,  470.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                                0,0,107),      &
 ! B048
 ratb_t1(48,'HO2       ','EtCO3     ','O2        ','EtCO3H    ','          ',   &
 '          ',3.05e-13,  0.00,  -1040.00, 0.00, 0.00, 0.00, 0.00,ti,0,0,107),   &
@@ -2812,7 +2888,8 @@ ratb_t1(50,'HO2       ','EtOO      ','EtOOH     ','          ','          ',   &
 ratb_t1(51,'HO2       ','HO2       ','H2O2      ','          ','          ',   &
 '          ',3.00e-13,  0.00, -460.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ratb_t1(51,'HO2       ','HO2       ','H2O2      ','          ','          ',   &
-'          ',2.20e-13,  0.00, -600.00, 0.00,0.00,0.00,0.00,ti+t+ol+cs,0,0,107),&
+'          ',2.20e-13,  0.00, -600.00, 0.00,0.00,0.00,0.00,ti+t+ol+cs+mc,      &
+                                                                0,0,107),      &
 ratb_t1(51,'HO2       ','HO2       ','H2O2      ','O2        ','          ',   &
 '          ',2.20e-13,  0.00, -600.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B052 Poschl00
@@ -2866,13 +2943,15 @@ ratb_t1(57,'HO2       ','MeCOCH2OO ','MeCOCH2OOH','          ','          ',   &
 '          ',1.36e-13,  0.00,  -1250.00, 0.00, 0.00, 0.00, 0.00,ti+t,0,0,107), &
 ! B058 IUPAC2009 see also asad_bimol
 ratb_t1(58,'HO2       ','MeOO      ','HCHO      ','          ','          ',   &
-'          ',3.80e-13,  0.00, -780.00, 0.00, 0.00, 0.00, 0.00,ti+t+st,0,0,107),&
+'          ',3.80e-13,  0.00, -780.00, 0.00, 0.00, 0.00, 0.00,ti+t+st+mc,      &
+                                                                0,0,107),      &
 ! B059 IUPAC2009 see also asad_bimol
 ! Is branching not handled consistently? No branching in R.
 ! n.b. also no branching for CRI. Will only use T-dependent
 ! branching-Ratio if asad_bimol detects both reactions
 ratb_t1(59,'HO2       ','MeOO      ','MeOOH     ','          ','          ',   &
-'          ',3.80e-13,  0.00, -780.00, 0.0, 0.0, 0.0, 0.0,ti+t+st+r+cs,0,0,107)&
+'          ',3.80e-13,  0.00, -780.00, 0.0, 0.0, 0.0, 0.0,ti+t+st+r+cs+mc,     &
+                                                                0,0,107),      &
 ]
 
 
@@ -2888,7 +2967,7 @@ ratb_t1(60,'HO2       ','NO        ','OH        ','NO2       ','          ',   &
 '          ',3.30e-12,  0.00, -270.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ! updates for 121 - st only
 ratb_t1(60,'HO2       ','NO        ','OH        ','NO2       ','          ',   &
-'          ',3.44e-12,  0.00, -260.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121),     &
+'          ',3.44e-12,  0.00, -260.00, 0.00, 0.00, 0.00, 0.00,st+mc,0,0,121),  &
 ratb_t1(60,'HO2       ','NO        ','OH        ','NO2       ','          ',   &
 '          ',3.50e-12,  0.00, -250.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ratb_t1(60,'HO2       ','NO        ','OH        ','NO2       ','          ',   &
@@ -2904,7 +2983,8 @@ ratb_t1(60,'HO2       ','NO        ','HONO2     ','          ','          ',   &
 ratb_t1(61,'HO2       ','NO3       ','OH        ','NO2       ','          ',   &
 '          ',3.50e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ratb_t1(61,'HO2       ','NO3       ','OH        ','NO2       ','          ',   &
-'          ',4.00e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs,0,0,107),&
+'          ',4.00e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs+mc,      &
+                                                            0,0,107),          &
 ratb_t1(61,'HO2       ','NO3       ','OH        ','NO2       ','O2        ',   &
 '          ',2.15e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B062 IUPAC2001
@@ -2912,9 +2992,9 @@ ratb_t1(62,'HO2       ','O3        ','OH        ','O2        ','          ',   &
 '          ',2.03e-16,  4.57, -693.00, 0.0, 0.0,0.0,0.0,ti+t+st+r+cs,0,0,107), &
 ! updates for 121 - st only
 ratb_t1(62,'HO2       ','O3        ','OH        ','O2        ','          ',   &
-'          ',1.00e-14,  0.00,  490.00, 0.0, 0.0,0.0,0.0,st,0,0,121),           &
+'          ',1.00e-14,  0.00,  490.00, 0.0, 0.0,0.0,0.0,st+mc,0,0,121),        &
 ratb_t1(62,'HO2       ','O3        ','OH        ','O2        ','O2        ',   &
-'          ',2.03e-16,  4.57, -693.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
+'          ',2.03e-16,  4.57, -693.00, 0.00, 0.00, 0.00, 0.00,s+mc,0,0,107),   &
 ! B063 MCMv3.2
 ratb_t1(63,'HO2       ','i-PrOO    ','i-PrOOH   ','          ','          ',   &
 '          ',1.51e-13,  0.00,-1300.00, 0.0, 0.0, 0.0,0.0,ti+t+st+r+cs,0,0,107),&
@@ -2992,7 +3072,7 @@ ratb_t1(77,'MeOO      ','MeOO      ','HO2       ','HO2       ','HCHO      ',   &
 ratb_t1(77,'MeOO      ','MeOO      ','HO2       ','HO2       ','HCHO      ',   &
 'HCHO      ',1.03e-13,  0.00, -390.00, 0.0, 0.0, 0.0, 0.0,st,0,rp,121),        &
 ratb_t1(77,'MeOO      ','MeOO      ','HCHO      ','HO2       ','O2        ',   &
-'          ',9.50e-14,  0.00, -390.00, 2.000, 2.000, 1.000, 0.00,s,0,0,107),   &
+'          ',9.50e-14,  0.00, -390.00, 2.000, 2.000, 1.000, 0.00,s+mc,0,0,107),&
 ! B078 IUPAC2002 see also asad_bimol
 ratb_t1(78,'MeOO      ','MeOO      ','MeOH      ','HCHO      ','          ',   &
 '          ',1.03e-13,  0.00, -365.00, 0.0, 0.0, 0.0, 0.0,ti+t+st+r,0,rp,107), &
@@ -3004,7 +3084,7 @@ ratb_t1(79,'MeOO      ','NO        ','HO2       ','HCHO      ','NO2       ',   &
 '          ',2.30e-12,  0.00, -360.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ! updates for 121 - st only
 ratb_t1(79,'MeOO      ','NO        ','HO2       ','HCHO      ','NO2       ',   &
-'          ',2.80e-12,  0.00, -300.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121),     &
+'          ',2.80e-12,  0.00, -300.00, 0.00, 0.00, 0.00, 0.00,st+mc,0,0,121),  &
 ratb_t1(79,'MeOO      ','NO        ','HO2       ','HCHO      ','NO2       ',   &
 '          ',2.95e-12,  0.00, -285.00, 0.00, 0.00, 0.00, 0.00,ti+t,0,0,107),   &
 ratb_t1(79,'MeOO      ','NO        ','HCHO      ','HO2       ','NO2       ',   &
@@ -3020,7 +3100,7 @@ ratb_t1(80,'MeOO      ','NO        ','MeONO2    ','          ','          ',   &
 '          ',2.30e-15,  0.00, -360.00, 0.00, 0.00, 0.00, 0.00,st,0,0,107),     &
 ! updates for 121
 ratb_t1(80,'MeOO      ','NO        ','MeONO2    ','          ','          ',   &
-'          ',8.97e-15,  0.00, -360.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121),     &
+'          ',8.97e-15,  0.00, -360.00, 0.00, 0.00, 0.00, 0.00,st+mc,0,0,121),  &
 ratb_t1(80,'MeOO      ','NO        ','MeONO2    ','          ','          ',   &
 '          ',2.95e-15,  0.00, -285.00, 0.00, 0.00, 0.00, 0.00,ti+t,0,0,107),   &
 ! (Slightly) different reaction rates in CRI
@@ -3039,25 +3119,29 @@ ratb_t1(81,'MeOO      ','NO3       ','HO2       ','HCHO      ','NO2       ',   &
 '          ',1.00e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,cs,0,0,107),     &
 ! CS2
 ratb_t1(81,'MeOO      ','NO3       ','HO2       ','HCHO      ','NO2       ',   &
-'          ',1.20e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,cs,0,0,119),     &
+'          ',1.20e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,cs+mc,0,0,119),  &
 ! B082 JPL2011
 ratb_t1(82,'N         ','NO        ','N2        ','O(3P)     ','          ',   &
-'          ',2.10e-11,  0.00, -100.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',2.10e-11,  0.00, -100.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B083 JPL2011
 ratb_t1(83,'N         ','NO2       ','N2O       ','O(3P)     ','          ',   &
-'          ',5.80e-12,  0.00, -220.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',5.80e-12,  0.00, -220.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B084 JPL2011
 ratb_t1(84,'N         ','O2        ','NO        ','O(3P)     ','          ',   &
 '          ',1.50e-11,  0.00, 3600.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(84,'N         ','O2        ','NO        ','O(3P)     ','          ',   &
-'          ',3.30e-12,  0.00, 3150.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',3.30e-12,  0.00, 3150.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,121),          &
 ! B085 ????
 ! Not in strat scheme
 ! Added N2O5+H2O gasphase reaction to CRI-Strat temporarily to account for loss
 ! of N2O5, at least until tropospheric heterogeneous chemistry is working...
 ratb_t1(85,'N2O5      ','H2O       ','HONO2     ','HONO2     ','          ',   &
- '          ',2.50e-22, 0.00,0.00,0.00,0.00,0.00,0.00,ti+t+st+cs,0,0,107),     &
+ '          ',2.50e-22, 0.00,0.00,0.00,0.00,0.00,0.00,ti+t+st+cs+mc,           &
+                                                             0,0,107),         &
 ! B086 Poschl00
 ratb_t1(86,'NO        ','ISO2      ','ISON      ','          ','          ',   &
 '          ',1.12e-13,  0.00, -360.00, 0.00, 0.00, 0.00, 0.00,ti+st,0,0,107),  &
@@ -3087,7 +3171,7 @@ ratb_t1(90,'NO        ','NO3       ','NO2       ','NO2       ','          ',   &
 '          ',1.50e-11,  0.00, -170.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ! updates for 121 - st only
 ratb_t1(90,'NO        ','NO3       ','NO2       ','NO2       ','          ',   &
-'          ',1.70e-11,  0.00, -125.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121)      &
+'          ',1.70e-11,  0.00, -125.00, 0.00, 0.00, 0.00, 0.00,st+mc,0,0,121)   &
 ]
 
 
@@ -3097,27 +3181,30 @@ n_ratb_s = n_ratb_e+1
 n_ratb_e = n_ratb_s+69
 ratb_defs_master(n_ratb_s:n_ratb_e) = [                                        &
 ratb_t1(90,'NO        ','NO3       ','NO2       ','NO2       ','          ',   &
-'          ',1.80e-11,  0.00, -110.00, 0.00, 0.00,0.00,0.00,ti+t+s+cs,0,0,107),&
+'          ',1.80e-11,  0.00, -110.00, 0.00, 0.00,0.00,0.00,ti+t+s+cs+mc,      &
+                                                            0,0,107),          &
 ! B091 JPL2011
 ratb_t1(91,'NO        ','O3        ','NO2       ','          ','          ',   &
 '          ',3.00e-12,  0.00, 1500.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ratb_t1(91,'NO        ','O3        ','NO2       ','O2        ','          ',   &
 '          ',1.40e-12,  0.00, 1310.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ratb_t1(91,'NO        ','O3        ','NO2       ','          ','          ',   &
-'          ',1.40e-12,  0.00, 1310.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs,0,0,107),&
+'          ',1.40e-12,  0.00, 1310.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs+mc,      &
+                                                            0,0,107),          &
 ! B092 JPL2011
 ratb_t1(92,'NO2       ','NO3       ','NO        ','NO2       ','O2        ',   &
 '          ',4.50e-14,  0.00, 1260.00, 0.0, 0.0, 0.0, 0.0,s+t+st+r+cs,0,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(92,'NO2       ','NO3       ','NO        ','NO2       ','O2        ',   &
-'          ',4.35e-14,  0.00, 1340.00, 0.0, 0.0, 0.0, 0.0,s+st+cs,0,0,121),    &
+'          ',4.35e-14,  0.00, 1340.00, 0.0, 0.0, 0.0, 0.0,s+st+cs+mc,0,0,121), &
 ! B093 JPL2011
 ratb_t1(93,'NO2       ','O3        ','NO3       ','          ','          ',   &
 '          ',1.20e-13,  0.00, 2450.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ratb_t1(93,'NO2       ','O3        ','NO3       ','O2        ','          ',   &
 '          ',1.40e-13,  0.00, 2470.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ratb_t1(93,'NO2       ','O3        ','NO3       ','          ','          ',   &
-'          ',1.40e-13,  0.00, 2470.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs,0,0,107),&
+'          ',1.40e-13,  0.00, 2470.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs+mc,      &
+                                                    0,0,107),                  &
 ! B094 JPL2011
 ratb_t1(94,'NO3       ','Br        ','BrO       ','NO2       ','          ',   &
 '          ',1.60e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
@@ -3152,7 +3239,7 @@ ratb_t1(97,'NO3       ','HCHO      ','HONO2     ','HO2       ','CO        ',   &
 '          ',2.00e-12,  0.00, 2440.00, 0.0, 0.0, 0.0, 0.0,ti+t+st+r,0,0,107),  &
 ! updates for 121 - st only
 ratb_t1(97,'NO3       ','HCHO      ','HONO2     ','HO2       ','CO        ',   &
-'          ',5.80e-16,  0.00,    0.00, 0.0, 0.0, 0.0, 0.0,st,0,0,121),         &
+'          ',5.80e-16,  0.00,    0.00, 0.0, 0.0, 0.0, 0.0,st+mc,0,0,121),      &
 ratb_t1(97,'NO3       ','HCHO      ','HONO2     ','CO        ','HO2       ',   &
 '          ',5.60e-16,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! Different rate in CRI
@@ -3186,7 +3273,8 @@ ratb_t1(101,'O(1D)     ','CH4       ','HCHO      ','H2        ','          ',  &
 '          ',9.00e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
 ! updates for 121 - st & cs
 ratb_t1(101,'O(1D)     ','CH4       ','HCHO      ','H2        ','          ',  &
-'          ',8.75e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,121),  &
+'          ',8.75e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,121),          &
 ratb_t1(101,'O(1D)     ','CH4       ','HCHO      ','H2        ','          ',  &
 '          ',7.50e-12,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,ti+t,0,0,107),   &
 ratb_t1(101,'O(1D)     ','CH4       ','HCHO      ','H2        ','          ',  &
@@ -3196,10 +3284,12 @@ ratb_t1(102,'O(1D)     ','CH4       ','HCHO      ','HO2       ','HO2       ',  &
 '          ',3.45e-11,  0.00,    0.00, 0.00,0.00,0.00,0.00,ti+t+st+cs,0,0,107),&
 ! updates for 121 - st & cs only
 ratb_t1(102,'O(1D)     ','CH4       ','HCHO      ','HO2       ','HO2       ',  &
-'          ',3.50e-11,  0.00,    0.00, 0.00,0.00,0.00,0.00,st+cs,0,0,121),     &
+'          ',3.50e-11,  0.00,    0.00, 0.00,0.00,0.00,0.00,st+cs+mc,           &
+                                                            0,0,121),          &
 ! B103 JPL2011
 ratb_t1(103,'O(1D)     ','CH4       ','OH        ','MeOO      ','          ',  &
-'          ',1.31e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',1.31e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,107),          &
 ratb_t1(103,'O(1D)     ','CH4       ','OH        ','MeOO      ','          ',  &
 '          ',1.35e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ratb_t1(103,'O(1D)     ','CH4       ','OH        ','MeOO      ','          ',  &
@@ -3207,23 +3297,26 @@ ratb_t1(103,'O(1D)     ','CH4       ','OH        ','MeOO      ','          ',  &
 ! B104 JPL2011
 ! Not in TI scheme
 ratb_t1(104,'O(1D)     ','CO2       ','O(3P)     ','CO2       ','          ',  &
-'          ',7.50e-11,  0.00, -115.00, 0.00, 0.00, 0.00, 0.00,t+st+cs,0,0,107),&
+'          ',7.50e-11,  0.00, -115.00, 0.00, 0.00, 0.00, 0.00,t+st+cs+mc,      &
+                                                            0,0,107),          &
 ratb_t1(104,'O(1D)     ','CO2       ','O(3P)     ','CO2       ','          ',  &
 '          ',7.40e-11,  0.00, -120.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B105 IUPAC2008
 ! Not in TI scheme
 ratb_t1(105,'O(1D)     ','H2        ','OH        ','H         ','          ',  &
-'          ',1.20e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,t+st+cs,0,0,107),&
+'          ',1.20e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,t+st+cs+mc,      &
+                                                            0,0,107),          &
 ratb_t1(105,'O(1D)     ','H2        ','OH        ','H         ','          ',  &
 '          ',1.10e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B106 JPL2011
 ratb_t1(106,'O(1D)     ','H2O       ','OH        ','OH        ','          ',  &
-'          ',1.63e-10,  0.00,  -60.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
+'          ',1.63e-10,  0.00,  -60.00, 0.00, 0.00, 0.00, 0.00,st+r,            &
+                                                            0,0,107),          &
 ratb_t1(106,'O(1D)     ','H2O       ','OH        ','OH        ','          ',  &
 '          ',2.20e-10,  0.00,    0.00, 0.00, 0.00,0.00,0.00,ti+s+t+cs,0,0,107),&
 ! CS2
 ratb_t1(106,'O(1D)     ','H2O       ','OH        ','OH        ','          ',  &
-'          ',2.14e-10,  0.00,    0.00, 0.00, 0.00,0.00,0.00,cs,0,0,119),       &
+'          ',2.14e-10,  0.00,    0.00, 0.00, 0.00,0.00,0.00,cs+mc,0,0,119),    &
 ! B107 JPL2011
 ratb_t1(107,'O(1D)     ','HBr       ','HBr       ','O(3P)     ','          ',  &
 '          ',3.00e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
@@ -3238,19 +3331,22 @@ ratb_t1(109,'O(1D)     ','HCl       ','H         ','ClO       ','          ',  &
 '          ',3.60e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(109,'O(1D)     ','HCl       ','H         ','ClO       ','          ',  &
-'          ',3.30e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',3.30e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,121),          &
 ! B110 JPL2011
 ratb_t1(110,'O(1D)     ','HCl       ','O(3P)     ','HCl       ','          ',  &
 '          ',1.35e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(110,'O(1D)     ','HCl       ','O(3P)     ','HCl       ','          ',  &
-'          ',1.80e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',1.80e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,121),          &
 ! B111 JPL2011
 ratb_t1(111,'O(1D)     ','HCl       ','OH        ','Cl        ','          ',  &
 '          ',1.01e-10,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(111,'O(1D)     ','HCl       ','OH        ','Cl        ','          ',  &
-'          ',9.90e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,121),&
+'          ',9.90e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,121),          &
 ! B112 JPL2011
 ratb_t1(112,'O(1D)     ','N2        ','O(3P)     ','N2        ','          ',  &
 '          ',2.15e-11,  0.00, -110.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
@@ -3260,13 +3356,14 @@ ratb_t1(112,'O(1D)     ','N2        ','O(3P)     ','N2        ','          ',  &
 '          ',1.80e-11,  0.00, -110.00, 0.00, 0.00, 0.00, 0.00,s+cs,0,0,107),   &
 ! CS2
 ratb_t1(112,'O(1D)     ','N2        ','O(3P)     ','N2        ','          ',  &
-'          ',2.00e-11,  0.00, -130.00, 0.00, 0.00, 0.00, 0.00,cs,0,0,119),     &
+'          ',2.00e-11,  0.00, -130.00, 0.00, 0.00, 0.00, 0.00,cs+mc,0,0,119),  &
 ! B113 JPL2011
 ratb_t1(113,'O(1D)     ','N2O       ','N2        ','O2        ','          ',  &
 '          ',4.60e-11,  0.00,  -20.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
 ! updates for 121 - st & cs
 ratb_t1(113,'O(1D)     ','N2O       ','N2        ','O2        ','          ',  &
-'          ',4.64e-11,  0.00,  -20.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,121),  &
+'          ',4.64e-11,  0.00,  -20.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,121),          &
 ratb_t1(113,'O(1D)     ','N2O       ','N2        ','O2        ','          ',  &
 '          ',4.90e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B114 JPL2011
@@ -3274,7 +3371,8 @@ ratb_t1(114,'O(1D)     ','N2O       ','NO        ','NO        ','          ',  &
 '          ',7.30e-11,  0.00,  -20.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
 ! updates for 121 - st & cs
 ratb_t1(114,'O(1D)     ','N2O       ','NO        ','NO        ','          ',  &
-'          ',7.26e-11,  0.00,  -20.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,121),  &
+'          ',7.26e-11,  0.00,  -20.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,121),          &
 ratb_t1(114,'O(1D)     ','N2O       ','NO        ','NO        ','          ',  &
 '          ',6.70e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B115 JPL2011
@@ -3286,7 +3384,7 @@ ratb_t1(115,'O(1D)     ','O2        ','O(3P)     ','O2        ','          ',  &
 '          ',3.20e-11,  0.00,  -70.00, 0.00, 0.00, 0.00, 0.00,s+cs,0,0,107),   &
 ! B115 CS2
 ratb_t1(115,'O(1D)     ','O2        ','O(3P)     ','O2        ','          ',  &
-'          ',3.20e-11,  0.00,  -67.00, 0.00, 0.00, 0.00, 0.00,cs,0,0,119)      &
+'          ',3.20e-11,  0.00,  -67.00, 0.00, 0.00, 0.00, 0.00,cs+mc,0,0,119)   &
 ]
 
 
@@ -3298,22 +3396,26 @@ ratb_defs_master(n_ratb_s:n_ratb_e) = [                                        &
 ! B116 JPL2011
 ! Not in TI scheme (or CRI)
 ratb_t1(116,'O(1D)     ','O3        ','O2        ','O(3P)     ','O(3P)     ',  &
-'          ',1.20e-10,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+t+st+cs,0,0,107),&
+'          ',1.20e-10,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+t+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B117 JPL2011
 ! Not in TI scheme
 ratb_t1(117,'O(1D)     ','O3        ','O2        ','O2        ','          ',  &
-'          ',1.20e-10,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+t+st+cs,0,0,107),&
+'          ',1.20e-10,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+t+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B118 JPL2011
 ratb_t1(118,'O(3P)     ','BrO       ','O2        ','Br        ','          ',  &
 '          ',1.90e-11,  0.00, -230.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
 ! B119 JPL2011
 ratb_t1(119,'O(3P)     ','ClO       ','Cl        ','O2        ','          ',  &
-'          ',2.80e-11,  0.00,  -85.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',2.80e-11,  0.00,  -85.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,107),          &
 ratb_t1(119,'O(3P)     ','ClO       ','Cl        ','O2        ','          ',  &
 '          ',3.80e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B120 JPL2011
 ratb_t1(120,'O(3P)     ','ClONO2    ','ClO       ','NO3       ','          ',  &
-'          ',3.60e-12,  0.00,  840.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',3.60e-12,  0.00,  840.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,107),          &
 ratb_t1(120,'O(3P)     ','ClONO2    ','ClO       ','NO3       ','          ',  &
 '          ',2.90e-12,  0.00,  800.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B121 ????
@@ -3326,7 +3428,8 @@ ratb_t1(121,'O(3P)     ','H2        ','OH        ','H         ','          ',  &
 ! B122 JPL2011
 ! Not in T/TI/R schemes
 ratb_t1(122,'O(3P)     ','H2O2      ','OH        ','HO2       ','          ',  &
-'          ',1.40e-12,  0.00, 2000.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.40e-12,  0.00, 2000.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B123 JPL2011
 ratb_t1(123,'O(3P)     ','HBr       ','OH        ','Br        ','          ',  &
 '          ',5.80e-12,  0.00, 1500.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
@@ -3339,23 +3442,26 @@ ratb_t1(124,'O(3P)     ','HCHO      ','OH        ','CO        ','HO2       ',  &
 '          ',3.40e-11,  0.00, 1600.00, 0.00, 0.00,0.00,0.00,s+st+cs,0,rm,107), &
 ! B125 JPL2011
 ratb_t1(125,'O(3P)     ','HCl       ','OH        ','Cl        ','          ',  &
-'          ',1.00e-11,  0.00, 3300.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.00e-11,  0.00, 3300.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B126 IUPAC2001
 ! Not in TI/R schemes
 ratb_t1(126,'O(3P)     ','HO2       ','OH        ','O2        ','          ',  &
 '          ',2.70e-11,  0.00, -224.00, 0.00, 0.00,0.00,0.00,s+t+st+cs,0,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(126,'O(3P)     ','HO2       ','OH        ','O2        ','          ',  &
-'          ',3.00e-11,  0.00, -200.00, 0.00, 0.00,0.00,0.00,s+st+cs,0,0,121),  &
+'          ',3.00e-11,  0.00, -200.00, 0.00, 0.00,0.00,0.00,s+st+cs+mc,        &
+                                                            0,0,121),          &
 ! B127 JPL2011
 ratb_t1(127,'O(3P)     ','HOCl      ','OH        ','ClO       ','          ',  &
-'          ',1.70e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.70e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B128 JPL2011
 ratb_t1(128,'O(3P)     ','NO2       ','NO        ','O2        ','          ',  &
 '          ',5.10e-12,  0.00, -210.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ! updates for 121 - st only
 ratb_t1(128,'O(3P)     ','NO2       ','NO        ','O2        ','          ',  &
-'          ',5.30e-12,  0.00, -200.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121),     &
+'          ',5.30e-12,  0.00, -200.00, 0.00, 0.00, 0.00, 0.00,st+mc,0,0,121),  &
 ratb_t1(128,'O(3P)     ','NO2       ','O2        ','NO        ','          ',  &
 '          ',5.60e-12,  0.00, -180.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ratb_t1(128,'O(3P)     ','NO2       ','NO        ','O2        ','          ',  &
@@ -3366,19 +3472,23 @@ ratb_t1(129,'O(3P)     ','NO3       ','O2        ','NO2       ','          ',  &
 '          ',1.70e-11,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+t+st+cs,0,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(129,'O(3P)     ','NO3       ','O2        ','NO2       ','          ',  &
-'          ',1.30e-11,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+st+cs,0,0,121),  &
+'          ',1.30e-11,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+st+cs+mc,        &
+                                                            0,0,121),          &
 ! B130 JPL2011
 ratb_t1(130,'O(3P)     ','O3        ','O2        ','O2        ','          ',  &
-'          ',8.00e-12,  0.00, 2060.00, 0.0, 0.0, 0.0,0.0,ti+s+t+st+cs,0,0,107),&
+'          ',8.00e-12,  0.00, 2060.00, 0.0, 0.0, 0.0,0.0,ti+s+t+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B131 JPL2011
 ratb_t1(131,'O(3P)     ','OClO      ','O2        ','ClO       ','          ',  &
-'          ',2.40e-12,  0.00,  960.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',2.40e-12,  0.00,  960.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B132 JPL2011
 ! Not in TI/R scheme
 ratb_t1(132,'O(3P)     ','OH        ','O2        ','HO2       ','          ',  &
 '          ',1.80e-11,  0.00, -180.00, 0.00, 0.00, 0.00, 0.00,t,0,0,107),      &
 ratb_t1(132,'O(3P)     ','OH        ','O2        ','H         ','          ',  &
-'          ',1.80e-11,  0.00, -180.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',1.80e-11,  0.00, -180.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,107),          &
 ratb_t1(132,'O(3P)     ','OH        ','O2        ','H         ','          ',  &
 '          ',2.40e-11,  0.00, -110.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B133 IUPAC2007*
@@ -3439,7 +3549,8 @@ ratb_t1(139,'O3        ','MACR      ','OH        ','MeCO3     ','          ',  &
 '          ',3.50e-16,  0.00, 2100.00, 0.38, 0.20, 0.00, 0.00,ti+st,0,0,107),  &
 ! B140 JPL2011
 ratb_t1(140,'OClO      ','NO        ','NO2       ','ClO       ','          ',  &
-'          ',2.50e-12,  0.00,  600.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',2.50e-12,  0.00,  600.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,107),          &
 ratb_t1(140,'OClO      ','NO        ','NO2       ','ClO       ','          ',  &
 '          ',3.40e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B141 IUPAC2007
@@ -3486,20 +3597,23 @@ ratb_t1(144,'OH        ','C5H8      ','RU14O2    ','          ','          ',  &
 '          ',2.70e-11,  0.00, -390.00, 1.00, 0.015, 0.00, 0.00,cs,0,0,119),    &
 ! B145 JPL2011
 ratb_t1(145,'OH        ','CH4       ','H2O       ','MeOO      ','          ',  &
-'          ',2.45e-12,  0.00, 1775.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
+'          ',2.45e-12,  0.00, 1775.00, 0.00, 0.00, 0.00, 0.00,st+r,            &
+                                                            0,0,107),          &
 ratb_t1(145,'OH        ','CH4       ','H2O       ','MeOO      ','          ',  &
-'          ',1.85e-12,  0.00, 1690.00, 0.00, 0.00,0.00,0.00,ti+s+t+cs,0,0,107),&
+'          ',1.85e-12,  0.00, 1690.00, 0.00, 0.00,0.00,0.00,ti+s+t+cs+mc,      &
+                                                        0,0,107),              &
 ! B146 IUPAC2005 see also asad_bimol
 ratb_t1(146,'OH        ','CO        ','HO2       ','          ','          ',  &
 '          ',1.44e-13,  0.00,    0.00, 0.0, 0.0,0.0,0.0,ti+t+st+r+cs,0,0,107), &
 ! updates for 121 - st & cs - NOTE CHANGE OF PRODUCTS
 ratb_t1(146,'OH        ','CO        ','H         ','CO2       ','          ',  &
-'          ',1.85e-13,  0.00,   65.00, 0.0, 0.0,0.0,0.0,st+cs,0,0,121),        &
+'          ',1.85e-13,  0.00,   65.00, 0.0, 0.0,0.0,0.0,st+cs+mc,0,0,121),     &
 ratb_t1(146,'OH        ','CO        ','H         ','CO2       ','          ',  &
 '          ',1.30e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B147 JPL2011
 ratb_t1(147,'OH        ','ClO       ','HCl       ','O2        ','          ',  &
-'          ',6.00e-13,  0.00, -230.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107) &
+'          ',6.00e-13,  0.00, -230.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107)           &
 ]
 
 
@@ -3510,10 +3624,12 @@ n_ratb_e = n_ratb_s+61
 ratb_defs_master(n_ratb_s:n_ratb_e) = [                                        &
 ! B148 JPL2011
 ratb_t1(148,'OH        ','ClO       ','HO2       ','Cl        ','          ',  &
-'          ',7.40e-12,  0.00, -270.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',7.40e-12,  0.00, -270.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B149 JPL2011
 ratb_t1(149,'OH        ','ClONO2    ','HOCl      ','NO3       ','          ',  &
-'          ',1.20e-12,  0.00,  330.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',1.20e-12,  0.00,  330.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B150 IUPAC2007
 ratb_t1(150,'OH        ','EtCHO     ','H2O       ','EtCO3     ','          ',  &
 '          ',4.90e-12,  0.00, -405.00, 0.00, 0.00, 0.00, 0.00,st,0,0,107),     &
@@ -3546,12 +3662,13 @@ ratb_t1(153,'OH        ','H2        ','H2O       ','HO2       ','          ',  &
 '          ',7.70e-12,  0.00, 2100.00, 0.00, 0.00,0.00,0.0,ti+t+r+cs,0,0,107), &
 ! updates for 121 - cs change products (& keep cs rates)
 ratb_t1(153,'OH        ','H2        ','H2O       ','H         ','          ',  &
-'          ',7.70e-12,  0.00, 2100.00, 0.00, 0.00,0.00,0.0,cs,0,0,121),        &
+'          ',7.70e-12,  0.00, 2100.00, 0.00, 0.00,0.00,0.0,cs+mc,0,0,121),     &
 ratb_t1(153,'OH        ','H2        ','H2O       ','H         ','          ',  &
 '          ',7.70e-12,  0.00, 2100.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B154 IUPAC2001
 ratb_t1(154,'OH        ','H2O2      ','H2O       ','HO2       ','          ',  &
-'          ',2.90e-12,  0.00,  160.00, 0.0,0.0,0.0,0.0,ti+s+t+st+r+cs,0,0,107),&
+'          ',2.90e-12,  0.00,  160.00, 0.0,0.0,0.0,0.0,ti+s+t+st+r+cs+mc,      &
+                                                            0,0,107),          &
 ratb_t1(154,'OH        ','H2O2      ','H2O       ','          ','          ',  &
 '          ',2.90e-12,  0.00,  160.00, 0.00, 0.00, 0.00, 0.00,ol,0,0,107),     &
 ! B155 IUPAC2007
@@ -3569,7 +3686,8 @@ ratb_t1(156,'OH        ','HBr       ','H2O       ','Br        ','          ',  &
 '          ',1.10e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B157 IUPAC2007
 ratb_t1(157,'OH        ','HCHO      ','H2O       ','HO2       ','CO        ',  &
-'          ',5.40e-12,  0.00, -135.00, 0.0, 0.0,0.0,0.0,ti+t+st+r+cs,0,0,107), &
+'          ',5.40e-12,  0.00, -135.00, 0.0, 0.0,0.0,0.0,ti+t+st+r+cs+mc,       &
+                                                            0,0,107),          &
 ! updates for 121 - st & cs
 ratb_t1(157,'OH        ','HCHO      ','H2O       ','HO2       ','CO        ',  &
 '          ',5.50e-12,  0.00, -125.00, 0.0, 0.0,0.0,0.0,st+cs,0,0,121),        &
@@ -3584,12 +3702,14 @@ ratb_t1(158,'OH        ','HCOOH     ','CO2       ','H2O       ','H         ',  &
 '          ',4.00e-13,  0.00,    0.00, 0.00, 0.00,0.00,0.00,st+cs,0,0,121),    &
 ! B159 JPL2011
 ratb_t1(159,'OH        ','HCl       ','H2O       ','Cl        ','          ',  &
-'          ',1.80e-12,  0.00,  250.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',1.80e-12,  0.00,  250.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,107),          &
 ratb_t1(159,'OH        ','HCl       ','H2O       ','Cl        ','          ',  &
 '          ',1.80e-12,  0.00,  240.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B160 JPL2011
 ratb_t1(160,'OH        ','HO2       ','H2O       ','          ','          ',  &
-'          ',4.80e-11,  0.00, -250.00, 0.0, 0.0,0.0,0.0,ti+t+st+r+cs,0,0,107), &
+'          ',4.80e-11,  0.00, -250.00, 0.0, 0.0,0.0,0.0,ti+t+st+r+cs+mc,       &
+                                                            0,0,107),          &
 ratb_t1(160,'OH        ','HO2       ','H2O       ','O2        ','          ',  &
 '          ',4.80e-11,  0.00, -250.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B161 IUPAC2007
@@ -3597,7 +3717,8 @@ ratb_t1(161,'OH        ','HO2NO2    ','H2O       ','NO2       ','O2        ',  &
 '          ',3.20e-13,  0.00, -690.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ! updates for 121 - st only
 ratb_t1(161,'OH        ','HO2NO2    ','H2O       ','NO2       ','O2        ',  &
-'          ',4.50e-13,  0.00, -610.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121),     &
+'          ',4.50e-13,  0.00, -610.00, 0.00, 0.00, 0.00, 0.00,st+mc,           &
+                                                            0,0,121),          &
 ratb_t1(161,'OH        ','HO2NO2    ','H2O       ','NO2       ','O2        ',  &
 '          ',1.30e-12,  0.00, -380.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ratb_t1(161,'OH        ','HO2NO2    ','H2O       ','NO2       ','          ',  &
@@ -3608,19 +3729,22 @@ ratb_t1(161,'OH        ','HO2NO2    ','H2O       ','NO2       ','O2        ',  &
 '          ',3.20e-13,  0.00,-690.00, 0.00, 0.00, 0.00, 0.00,cs,0,0,119),      &
 ! B162 JPL2011
 ratb_t1(162,'OH        ','HOCl      ','ClO       ','H2O       ','          ',  &
-'          ',3.00e-12,  0.00,  500.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,0,0,107),&
+'          ',3.00e-12,  0.00,  500.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            0,0,107),          &
 ! B163 IUPAC2004
 ratb_t1(163,'OH        ','HONO      ','H2O       ','NO2       ','          ',  &
 '          ',2.50e-12,  0.00, -260.00, 0.00,0.00,0.00,0.00,ti+t+st+cs,0,0,107),&
 ! updates for 121 - st & cs only
 ratb_t1(163,'OH        ','HONO      ','H2O       ','NO2       ','          ',  &
-'          ',3.00e-12,  0.00, -250.00, 0.00,0.00,0.00,0.00,st+cs,0,0,121),     &
+'          ',3.00e-12,  0.00, -250.00, 0.00,0.00,0.00,0.00,st+cs+mc,           &
+                                                            0,0,121),          &
 ! B164 IUPAC2004 see also asad_bimol
 ratb_t1(164,'OH        ','HONO2     ','H2O       ','NO3       ','          ',  &
 '          ',2.40e-14,  0.00, -460.00, 0.00, 0.00, 0.00, 0.00,st+r+cs,0,0,107),&
 ! updates for 121 - st & cs only
 ratb_t1(164,'OH        ','HONO2     ','H2O       ','NO3       ','          ',  &
-'          ',3.70e-14,  0.00, -240.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,121),  &
+'          ',3.70e-14,  0.00, -240.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,121),          &
 ratb_t1(164,'OH        ','HONO2     ','H2O       ','NO3       ','          ',  &
 '          ',1.50e-13,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,ti+t+s,0,0,107), &
 ! B165 Poschl00
@@ -3717,13 +3841,14 @@ ratb_t1(179,'OH        ','MeOH      ','HO2       ','HCHO      ','          ',  &
 '          ',2.85e-12,  0.00,  345.00, 0.00,0.00,0.00,0.00,ti+st+r+cs,0,0,107),&
 ! updates for 121 - st & cs
 ratb_t1(179,'OH        ','MeOH      ','HO2       ','HCHO      ','          ',  &
-'          ',2.90e-12,  0.00,  345.00, 0.00,0.00,0.00,0.00,st+cs,0,0,121),     &
+'          ',2.90e-12,  0.00,  345.00, 0.00,0.00,0.00,0.00,st+cs+mc,           &
+                                                            0,0,121),          &
 ! B180 IUPAC2006
 ratb_t1(180,'OH        ','MeONO2    ','HCHO      ','NO2       ','H2O       ',  &
 '          ',4.00e-13,  0.00,  845.00, 0.00, 0.00, 0.00, 0.00,ti+t+st,0,0,107),&
 ! updates for 121 - st only
 ratb_t1(180,'OH        ','MeONO2    ','HCHO      ','NO2       ','H2O       ',  &
-'          ',8.00e-13,  0.00, 1000.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121),     &
+'          ',8.00e-13,  0.00, 1000.00, 0.00, 0.00, 0.00, 0.00,st+mc,0,0,121),  &
 ! - (Very!) Different reaction rates in CRI
 ratb_t1(180,'OH        ','MeONO2    ','HCHO      ','NO2       ','H2O       ',  &
 '          ',1.00e-14,  0.00,-1060.00, 0.00, 0.00, 0.00, 0.00,cs,0,0,107),     &
@@ -3736,7 +3861,7 @@ ratb_t1(181,'OH        ','MeOOH     ','H2O       ','HCHO      ','OH        ',  &
 '          ',2.12e-12,  0.00, -190.00, 0.00, 0.00, 0.00, 0.00,st+r,0,0,107),   &
 ! updates for 121 - st only
 ratb_t1(181,'OH        ','MeOOH     ','H2O       ','HCHO      ','OH        ',  &
-'          ',1.10e-12,  0.00, -200.00, 0.00, 0.00, 0.00, 0.00,st,0,0,121),     &
+'          ',1.10e-12,  0.00, -200.00, 0.00, 0.00, 0.00, 0.00,st+mc,0,0,121),  &
 ! Note the different rates
 ratb_t1(181,'OH        ','MeOOH     ','H2O       ','HCHO      ','OH        ',  &
 '          ',1.02e-12,  0.00, -190.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs,0,0,107),&
@@ -3748,7 +3873,7 @@ ratb_t1(182,'OH        ','MeOOH     ','H2O       ','MeOO      ','          ',  &
 '          ',1.89e-12,  0.00, -190.00, 0.0, 0.0, 0.0,0.0,ti+t+st+r+cs,0,0,107),&
 ! updates for 121 - st only
 ratb_t1(182,'OH        ','MeOOH     ','H2O       ','MeOO      ','          ',  &
-'          ',2.70e-12,  0.00, -200.00, 0.0, 0.0, 0.0,0.0,st,0,0,121),          &
+'          ',2.70e-12,  0.00, -200.00, 0.0, 0.0, 0.0,0.0,st+mc,0,0,121),       &
 ratb_t1(182,'OH        ','MeOOH     ','H2O       ','MeOO      ','          ',  &
 '          ',2.70e-12,  0.00, -200.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! CS2
@@ -3764,15 +3889,17 @@ ratb_t1(184,'OH        ','NO3       ','HO2       ','NO2       ','          ',  &
 '          ',2.20e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st,0,0,107),   &
 ratb_t1(184,'OH        ','NO3       ','HO2       ','NO2       ','          ',  &
 ! updates for 121 - s & st
-'          ',2.00e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st,0,0,121),   &
+'          ',2.00e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,s+st+mc,0,0,121),&
 ratb_t1(184,'OH        ','NO3       ','HO2       ','NO2       ','          ',  &
 '          ',2.00e-11,  0.00,    0.00, 0.00, 0.00, 0.00, 0.00,ti+t+cs,0,0,107),&
 ! B185 JPL2011
 ratb_t1(185,'OH        ','O3        ','HO2       ','O2        ','          ',  &
-'          ',1.70e-12,  0.00,  940.00, 0.0,0.0,0.0,0.0,ti+t+s+st+r+cs,0,0,107),&
+'          ',1.70e-12,  0.00,  940.00, 0.0,0.0,0.0,0.0,ti+t+s+st+r+cs+mc,      &
+                                                            0,0,107),          &
 ! B186 JPL2011
 ratb_t1(186,'OH        ','OClO      ','HOCl      ','O2        ','          ',  &
-'          ',1.40e-12,  0.00, -600.00, 0.00, 0.00, 0.00, 0.00,st+cs,0,0,107),  &
+'          ',1.40e-12,  0.00, -600.00, 0.00, 0.00, 0.00, 0.00,st+cs+mc,        &
+                                                            0,0,107),          &
 ratb_t1(186,'OH        ','OClO      ','HOCl      ','O2        ','          ',  &
 '          ',4.50e-13,  0.00, -800.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B187 IUPAC2001
@@ -3782,7 +3909,8 @@ ratb_t1(187,'OH        ','OH        ','H2O       ','O(3P)     ','          ',  &
 '          ',6.31e-14,  2.60, -945.00, 0.00,0.00,0.00,0.00,ti+t+st+cs,0,0,107),&
 ! updates for 121 - st & cs
 ratb_t1(187,'OH        ','OH        ','H2O       ','O(3P)     ','          ',  &
-'          ',1.80e-12,  0.00,    0.00, 0.00,0.00,0.00,0.00,st+cs,0,0,121),     &
+'          ',1.80e-12,  0.00,    0.00, 0.00,0.00,0.00,0.00,st+cs+mc,           &
+                                                            0,0,121),          &
 ratb_t1(187,'OH        ','OH        ','H2O       ','O(3P)     ','          ',  &
 '          ',4.20e-12,  0.00,  240.00, 0.00, 0.00, 0.00, 0.00,s,0,0,107),      &
 ! B188 MCMv3.2
@@ -3853,13 +3981,15 @@ ratb_t1(198,'CS2       ','O(3P)     ','COS       ','SO2       ','CO        ',  &
 '          ',3.20e-11,  0.00,  650.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,107),&
 ! updates for 121 - s, st & cs
 ratb_t1(198,'CS2       ','O(3P)     ','CO        ','SO2       ','SO2       ',  &
-'          ',3.30e-11,  0.00,  650.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,121),&
+'          ',3.30e-11,  0.00,  650.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            a,0,121),          &
 ! B199
 ratb_t1(199,'CS2       ','OH        ','COS       ','SO2       ','          ',  &
 '          ',1.25e-16,  0.00,-4550.00, 0.00, 0.00,0.00,0.00,s+st+r+cs,a,0,107),&
 ! updates for 121 - s, st, & cs only
 ratb_t1(199,'CS2       ','OH        ','COS       ','SO2       ','          ',  &
-'          ',2.00e-15,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+st+cs,a,0,121),  &
+'          ',2.00e-15,  0.00,    0.00, 0.00, 0.00,0.00,0.00,s+st+cs+mc,        &
+                                                            a,0,121),          &
 ratb_t1(199,'CS2       ','OH        ','SO2       ','COS       ','          ',  &
 '          ',8.80e-16,  0.00,  -2300.00, 0.00, 0.00, 0.00, 0.00, ti,a,0,107),  &
 ! B200
@@ -3925,38 +4055,44 @@ ratb_t1(205,'H2S       ','O(3P)     ','OH        ','SO2       ','          ',  &
 '          ',9.20e-12,  0.00, 1800.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(205,'H2S       ','O(3P)     ','OH        ','SO2       ','OH        ',  &
-'O(3P)     ',9.20e-12,  0.00, 1800.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,121),&
+'O(3P)     ',9.20e-12,  0.00, 1800.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            a,0,121),          &
 ! B206
 ratb_t1(206,'H2S       ','OH        ','SO2       ','H2O       ','          ',  &
 '          ',6.00e-12,  0.00,   75.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(206,'H2S       ','OH        ','SO2       ','H2O       ','          ',  &
-'          ',3.30e-12,  0.00, -100.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,121),&
+'          ',3.30e-12,  0.00, -100.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            a,0,121),          &
 ratb_t1(206,'H2S       ','OH        ','SO2       ','          ','          ',  &
 '          ',6.00e-12,  0.00,   75.00, 0.00, 0.00, 0.00, 0.00, ti,a,0,107),    &
 ! B207
 ! Not in TIA scheme
 ratb_t1(207,'COS       ','O(3P)     ','CO        ','SO2       ','          ',  &
-'          ',2.10e-11,  0.00, 2200.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,107),&
+'          ',2.10e-11,  0.00, 2200.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            a,0,107),          &
 ! B208
 ratb_t1(208,'COS       ','OH        ','CO2       ','SO2       ','          ',  &
 '          ',1.10e-13,  0.00, 1200.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,107),&
 ! updates for 121 - s, st, & cs
 ratb_t1(208,'COS       ','OH        ','CO2       ','SO2       ','          ',  &
-'          ',7.20e-14,  0.00, 1070.00, 0.00, 0.00, 0.00, 0.00,s+st+cs,a,0,121),&
+'          ',7.20e-14,  0.00, 1070.00, 0.00, 0.00, 0.00, 0.00,s+st+cs+mc,      &
+                                                            a,0,121),          &
 ratb_t1(208,'COS       ','OH        ','SO2       ','          ','          ',  &
 '          ',1.10e-13,  0.00, 1200.00, 0.00, 0.00, 0.00, 0.00, ti,a,0,107),    &
 ! B209
 ! Not in TI scheme
 ratb_t1(209,'SO2       ','O3        ','SO3       ','          ','          ',  &
-'          ',3.00e-12,  0.00, 7000.00, 0.00, 0.00, 0.00, 0.00, s+st,a,0,107),  &
+'          ',3.00e-12,  0.00, 7000.00, 0.00, 0.00, 0.00, 0.00, s+st+mc,        &
+                                                            a,0,107),          &
 ! B210
 ! Not in TI scheme
 ratb_t1(210,'SO3       ','H2O       ','H2SO4     ','H2O       ','          ',  &
-'          ',8.50e-41,  0.00,-6540.00, 0.00, 0.00, 0.00, 0.00, s+st,a,0,107),  &
+'          ',8.50e-41,  0.00,-6540.00, 0.00, 0.00, 0.00, 0.00, s+st,           &
+                                                            a,0,107),          &
 ! B210 - Different rate in CRI
 ratb_t1(210,'SO3       ','H2O       ','H2SO4     ','H2O       ','          ',  &
-'          ',3.90e-41,  0.00,-6830.60, 0.00, 0.00, 0.00, 0.00,cs,a,0,107),     &
+'          ',3.90e-41,  0.00,-6830.60, 0.00, 0.00, 0.00, 0.00,cs+mc,a,0,107),  &
 ! B211
 ratb_t1(211,'Monoterp  ','OH        ','Sec_Org   ','          ','          ',  &
 '          ',1.20e-11,  0.00, -444.0, 0.13, 0.0, 0.0, 0.0, ti+st+ol+r,a,0,107),&
@@ -8380,7 +8516,10 @@ IF (ukca_config%l_ukca_cristrat) THEN
   chem_scheme = cs
   i = i + 1
 END IF
-
+IF (ukca_config%l_ukca_marschem) THEN
+  chem_scheme = mc
+  i = i + 1
+END IF
 
 ! Determine which qualifiers to use, based on namelist options.
 qualifier = 0

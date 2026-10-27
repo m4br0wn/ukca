@@ -377,6 +377,7 @@ TYPE :: ukca_config_spec_type
   LOGICAL :: l_ukca_offline            ! True for N-R Offline Oxidants chemistry
                                        ! scheme
   LOGICAL :: l_ukca_cristrat           ! True for CRI-Strat chemistry (N-R)
+  LOGICAL :: l_ukca_marschem           ! True for Mars Chemistry      (N-R)
   LOGICAL :: l_ukca_stratcfc           ! True for Strat-CFC chemistry (N-R)
   LOGICAL :: l_ukca_achem              ! True to add aerosol chemistry to an
                                        ! N-R scheme
@@ -558,6 +559,7 @@ INTEGER, PARAMETER :: i_ukca_chem_strattrop  = 51 ! Strat-trop (CheST) scheme
 INTEGER, PARAMETER :: i_ukca_chem_strat      = 52 ! Std. Stratospheric scheme
 INTEGER, PARAMETER :: i_ukca_chem_offline    = 54 ! Offline Oxidants (N-R)
                                                   ! scheme
+INTEGER, PARAMETER :: i_ukca_chem_marschem   = 55 ! Mars chemical scheme (mc)
 INTEGER, PARAMETER :: i_ukca_chem_cristrat   = 59 ! Common Representative
                                                   ! Intermidiates (CRI) scheme
                                                   ! with stratospheric chem.
@@ -956,6 +958,7 @@ ukca_config%l_ukca_strattrop = .FALSE.
 ukca_config%l_ukca_strat = .FALSE.
 ukca_config%l_ukca_offline = .FALSE.
 ukca_config%l_ukca_cristrat = .FALSE.
+ukca_config%l_ukca_marschem = .FALSE.
 ukca_config%l_ukca_stratcfc = .FALSE.
 ukca_config%l_ukca_achem = .FALSE.
 ukca_config%l_ukca_nr_aqchem = .FALSE.
@@ -1165,7 +1168,8 @@ SUBROUTINE ukca_get_config(                                                    &
    l_fix_ukca_h2so4_ystore,                                                    &
    l_ukca_chem, l_ukca_trop, l_ukca_aerchem, l_ukca_raq, l_ukca_raqaero,       &
    l_ukca_offline_be, l_ukca_tropisop, l_ukca_strattrop, l_ukca_strat,         &
-   l_ukca_offline, l_ukca_cristrat, l_ukca_stratcfc, l_ukca_achem,             &
+   l_ukca_offline, l_ukca_cristrat, l_ukca_marschem,                           &
+   l_ukca_stratcfc, l_ukca_achem,                                              &
    l_ukca_nr_aqchem,                                                           &
    l_ukca_advh2o,                                                              &
    l_asad_chem_diags_support,                                                  &
@@ -1387,6 +1391,7 @@ LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_strattrop
 LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_strat
 LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_offline
 LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_cristrat
+LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_marschem
 LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_stratcfc
 LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_achem
 LOGICAL, OPTIONAL, INTENT(OUT) :: l_ukca_nr_aqchem
@@ -1674,6 +1679,7 @@ IF (PRESENT(l_ukca_strattrop)) l_ukca_strattrop = ukca_config%l_ukca_strattrop
 IF (PRESENT(l_ukca_strat)) l_ukca_strat = ukca_config%l_ukca_strat
 IF (PRESENT(l_ukca_offline)) l_ukca_offline = ukca_config%l_ukca_offline
 IF (PRESENT(l_ukca_cristrat)) l_ukca_cristrat = ukca_config%l_ukca_cristrat
+IF (PRESENT(l_ukca_marschem)) l_ukca_marschem = ukca_config%l_ukca_marschem
 IF (PRESENT(l_ukca_stratcfc)) l_ukca_stratcfc = ukca_config%l_ukca_stratcfc
 IF (PRESENT(l_ukca_achem)) l_ukca_achem = ukca_config%l_ukca_achem
 IF (PRESENT(l_ukca_nr_aqchem)) l_ukca_nr_aqchem = ukca_config%l_ukca_nr_aqchem
