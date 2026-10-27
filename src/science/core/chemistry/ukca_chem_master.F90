@@ -518,7 +518,7 @@ chch_t1(92,'HO2S      ',1,'SS        ','          ',0,1,t,0,0,107)             &
 
 
 ! Species definitions continued
-chch_defs_master(170:263)=[                                                    &
+chch_defs_master(170:264)=[                                                    &
 !  93
 chch_t1(93,'s-BuOO    ',1,'SS        ','          ',0,0,r,0,0,107),            &
 !  94
@@ -713,7 +713,7 @@ chch_t1(181,'RU10OOH   ',1,'TR        ','          ',1,1,cs,0,0,107)           &
 ]
 
 
-chch_defs_master(264:n_chch_master)=[                                          &
+chch_defs_master(265:n_chch_master)=[                                          &
 ! 182 DD: 94,WD: 69,
 chch_t1(182,'NRU14OOH  ',1,'TR        ','          ',1,1,cs,0,0,107),          &
 ! 183 DD: 95,WD: 70,
@@ -1013,12 +1013,12 @@ ratj_t1(1,'EtOOH     ','PHOTON    ','MeCHO     ','HO2       ','OH        ',    &
 ! 2
 ratj_t1(2,'H2O2      ','PHOTON    ','OH        ','OH        ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.0,'jh2o2     ',ti+s+t+st+r+cs+mc,      &
-                                                        ,0,0,107),             &
+                                                         0,0,107),             &
 ! 3
 ! This should produce H+ CHO -> H + HO2 + CO in ST scheme.
 ratj_t1(3,'HCHO      ','PHOTON    ','HO2       ','HO2       ','CO        ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jhchoa    ',ti+t+st+r+cs+mc,      &
-                                                        ,0,0,107),             &
+                                                         0,0,107),             &
 ! CS2
 ratj_t1(3,'HCHO      ','PHOTON    ','HO2       ','HO2       ','CO        ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jforma    ',cs+mc,0,0,119),       &
@@ -1027,7 +1027,7 @@ ratj_t1(3,'HCHO      ','PHOTON    ','H         ','CO        ','HO2       ',    &
 ! 4
 ratj_t1(4,'HCHO      ','PHOTON    ','H2        ','CO        ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.0,'jhchob    ',ti+s+t+st+r+cs+mc,      &
-                                                        ,0,0,107),             &
+                                                         0,0,107),             &
 ! CS2
 ratj_t1(4,'HCHO      ','PHOTON    ','H2        ','CO        ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.0,'jformb    ',cs+mc,0,0,119),         &
@@ -1043,7 +1043,7 @@ ratj_t1(5,'HO2NO2    ','PHOTON    ','HO2       ','NO2       ','          ',    &
 ! 6
 ratj_t1(6,'HONO2     ','PHOTON    ','OH        ','NO2       ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jhono2    ',ti+t+st+r+cs+mc,      &
-                                                        ,0,0,107),             &
+                                                         0,0,107),             &
 ratj_t1(6,'HONO2     ','PHOTON    ','NO2       ','OH        ','          ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jhono2    ',s,0,0,107) ,          &
 ! 7
@@ -1057,7 +1057,7 @@ ratj_t1(8,'MeCHO     ','PHOTON    ','CH4       ','CO        ','          ',    &
 ! THIS REACTION IS MISSING IN THE TROPOSPHERIC CHEMISTRY SCHEME.
 ratj_t1(9,'MeOOH     ','PHOTON    ','HO2       ','HCHO      ','OH        ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jmhp      ',ti+st+r+cs+mc,      &
-                                                        ,0,0,107),             &
+                                                         0,0,107),             &
 ratj_t1(9,'MeOOH     ','PHOTON    ','HCHO      ','HO2       ','OH        ',    &
      '          ', 0.0,0.0,0.0,0.0, 100.000,'jmhp      ',s,0,0,107) ,          &
 ! 10
@@ -1707,7 +1707,7 @@ ratt_t1(10,'HO2       ','HO2       ','H2O2      ','O2        ',     0.0,       &
   2.10e-33,  0.00,-920.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, st+r,0,0,107),       &
 ratt_t1(10,'HO2       ','HO2       ','H2O2      ','O2        ',     0.0,       &
   1.90e-33,  0.00,-980.0,  0.00e+00,  0.0, 0.0, 0.0, 0.0, ti+s+t+cs+mc,        &
-                                                            ,0,0,107),         &
+                                                             0,0,107),         &
 ! T011 JPL 2011
 ratt_t1(11,'HO2       ','NO2       ','HO2NO2    ','m         ',     0.6,       &
   2.00e-31, -3.40, 0.00,  2.90e-12,  0.0, 0.0, 0.0, 0.0, st+r,0,0,107),        &
