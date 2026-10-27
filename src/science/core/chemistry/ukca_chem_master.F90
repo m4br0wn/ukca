@@ -195,7 +195,7 @@ chch_t1( 3,'O3        ',1,'TR        ','Ox        ',1,1,ti+st+s+t+r+cs,        &
 !   3
 chch_t1( 3,'O3        ',1,'CF        ','Ox        ',0,0,ol,0,0,107),           &
 !   3
-chch_t1( 3,'O3        ',1,'TR        ','Ox        ',0,0,mc,0,0,107),           &
+chch_t1( 3,'O3        ',1,'TR        ','Ox        ',1,1,mc,0,0,107),           &
 !   4
 chch_t1( 4,'N         ',1,'TR        ','NOx       ',0,0,s+st+cs+mc,0,0,107),   &
 ! NOx is emitted as NO2 for all schemes except RAQ which causes ozone
@@ -206,35 +206,35 @@ chch_t1( 4,'N         ',1,'TR        ','NOx       ',0,0,s+st+cs+mc,0,0,107),   &
 chch_t1( 5,'NO        ',1,'TR        ','NOx       ',1,0,s+st+cs,0,0,107),      &
 chch_t1( 5,'NO        ',1,'TR        ','NOx       ',1,0,ti+t,0,0,107),         &
 !   5                 (10)
-chch_t1( 5,'NO        ',1,'TR        ','NOx       ',0,0,r+mc,0,0,107),         &
+chch_t1( 5,'NO        ',1,'TR        ','NOx       ',1,0,r+mc,0,0,107),         &
 !   6 DD:  3,WD:  2,
 ! No dry deposition for NO3 in RAQ/S/T schemes.
 chch_t1( 6,'NO3       ',1,'TR        ','NOx       ',0,1,r+s+t,0,0,107),        &
 chch_t1( 6,'NO3       ',1,'TR        ','NOx       ',1,1,ti+st+cs,0,0,107),     &
 chch_t1( 6,'NO3       ',1,'CF        ','NOx       ',0,0,ol,0,0,107),           &
-chch_t1( 6,'NO3       ',1,'TR        ','NOx       ',0,0,mc,0,0,107),           &
+chch_t1( 6,'NO3       ',1,'TR        ','NOx       ',1,1,mc,0,0,107),           &
 !   7 DD:  4,
 chch_t1( 7,'NO2       ',1,'TR        ','NOx       ',1,0,ti+s+st+cs,0,0,107),   &
 chch_t1( 7,'NO2       ',1,'TR        ','NOx       ',1,0,t+r,0,0,107),          &
-chch_t1( 7,'NO2       ',1,'TR        ','NOx       ',0,0,mc,0,0,107),           &
+chch_t1( 7,'NO2       ',1,'TR        ','NOx       ',1,0,mc,0,0,107),           &
 ! No dry deposition for N2O5 in R/S/T schemes
 !   8 DD:  5,WD:  3,
 chch_t1( 8,'N2O5      ',2,'TR        ','          ',0,1,r+s+t,0,0,107),        &
 chch_t1( 8,'N2O5      ',2,'TR        ','          ',1,1,ti+st+cs,0,0,107),     &
-chch_t1( 8,'N2O5      ',2,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1( 8,'N2O5      ',2,'TR        ','          ',1,1,mc,0,0,107),           &
 !   9 DD:  6,WD:  4,
 ! No dry deposition for HO2NO2 in R and T schemes
 chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',0,1,r+t,0,0,107),          &
 chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',1,1,ti+s+st+cs,0,0,107),   &
-chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  10 DD:  7,WD:  5,   (20)
 chch_t1(10,'HONO2     ',1,'TR        ','          ',1,1,ti+s+t+st+r+cs,        &
                                                                 0,0,107),      &
-chch_t1(10,'HONO2     ',1,'TR        ','          ',1,0,mc,0,0,107),           &
+chch_t1(10,'HONO2     ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  11 DD:  8,WD:  6,
 chch_t1(11,'H2O2      ',1,'TR        ','          ',1,1,ti+s+t+st+ol+r+cs,     &
                                                                    0,0,107),   &
-chch_t1(11,'H2O2      ',1,'TR        ','          ',1,0,mc,0,0,107),           &
+chch_t1(11,'H2O2      ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  12
 ! Dry deposition of CH4 not enabled in S and ST schemes.
 chch_t1(12,'CH4       ',1,'TR        ','          ',0,0,s+st+cs,0,ce,107),     &
@@ -247,17 +247,17 @@ chch_t1(12,'CH4       ',1,'TR        ','          ',0,0,s+cs+mc,ce,0,107),     &
 ! Dry deposition of CH4 enabled in TI, T, ST and R schemes.
 chch_t1(12,'CH4       ',1,'TR        ','          ',1,0,ti+t+st+r,ce,0,107),   &
 !  13 DD: 10,
-chch_t1(13,'CO        ',1,'TR        ','          ',1,0,ti+s+t+st+r+cs+mc,     &
+chch_t1(13,'CO        ',1,'TR        ','          ',1,0,ti+s+t+st+r+cs,        &
                                                                 0,0,107),      &
-chch_t1(13,'CO        ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(13,'CO        ',1,'TR        ','          ',1,0,mc,0,0,107),           &
 !  14 DD: 11,WD:  7,
 ! No dry deposition for HCHO in S/T/R schemes
 chch_t1(14,'HCHO      ',1,'TR        ','          ',0,1,s+t+r,0,0,107),        &
 chch_t1(14,'HCHO      ',1,'TR        ','          ',1,1,ti+st+cs,0,0,107),     &
-chch_t1(14,'HCHO      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(14,'HCHO      ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  15        WD:  8,
 chch_t1(15,'MeOO      ',1,'TR        ','          ',0,1,ti+s,0,0,107),         &
-chch_t1(15,'MeOO      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(15,'MeOO      ',1,'OO        ','          ',0,1,mc,0,0,107),           &
 chch_t1(15,'MeOO      ',1,'SS        ','          ',0,1,t+r,0,0,107),          &
 chch_t1(15,'MeOO      ',1,'TR        ','          ',0,1,st,0,rn+rp,107),       &
 ! Select 'OO' type MeOO in ST mechanism if RN or RP == T
@@ -266,7 +266,7 @@ chch_t1(15,'MeOO      ',1,'OO        ','          ',0,1,st+cs,rn+rp,0,107),    &
 !  16 DD: 12,WD:  9,
 chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,1,ti+s+t+st+r+cs,        &
     0,0,107),                                                                  &
-chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,0,mc,0,0,107),           &
+chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  17
 chch_t1(17,'H         ',1,'TR        ','HOx       ',0,0,s+st+cs+mc,0,0,107),   &
 !  18
@@ -280,7 +280,7 @@ chch_t1(19,'OH        ',1,'SS        ','HOx       ',0,0,t+r,0,0,107),          &
 chch_t1(19,'OH        ',1,'CF        ','HOx       ',0,0,ol,0,0,107),           &
 !  20        WD: 10,
 chch_t1(20,'HO2       ',1,'TR        ','HOx       ',0,1,ti+s+st+cs,0,0,107),   &
-chch_t1(20,'HO2       ',1,'TR        ','HOx       ',0,0,mc,0,0,107),           &
+chch_t1(20,'HO2       ',1,'TR        ','HOx       ',0,1,mc,0,0,107),           &
 chch_t1(20,'HO2       ',1,'SS        ','HOx       ',0,1,t+r,0,0,107),          &
 chch_t1(20,'HO2       ',1,'CF        ','HOx       ',0,0,ol,0,0,107),           &
 !  21
@@ -303,17 +303,17 @@ chch_t1(28,'BrONO2    ',1,'TR        ','          ',0,1,s+st+cs,0,0,107),      &
 chch_t1(29,'N2O       ',1,'TR        ','          ',0,0,s+st+cs+mc,0,0,107),   &
 !  30 DD: 13,WD: 12,   (50)
 chch_t1(30,'HCl       ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
-chch_t1(30,'HCl       ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(30,'HCl       ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  31 DD: 14,WD: 13,
 chch_t1(31,'HOCl      ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
-chch_t1(31,'HOCl      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(31,'HOCl      ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  32 DD: 15,WD: 14,
 chch_t1(32,'HBr       ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
 !  33 DD: 16,WD: 15,
 chch_t1(33,'HOBr      ',1,'TR        ','          ',1,1,s+st+cs,0,0,107),      &
 !  34        WD: 16,
 chch_t1(34,'ClONO2    ',1,'TR        ','          ',0,1,s+st+cs,0,0,107),      &
-chch_t1(34,'ClONO2    ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(34,'ClONO2    ',1,'TR        ','          ',0,1,mc,0,0,107),           &
 !  35
 chch_t1(35,'CFCl3     ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
 !  36
@@ -322,7 +322,7 @@ chch_t1(36,'CF2Cl2    ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
 chch_t1(37,'MeBr      ',1,'TR        ','          ',0,0,s+st+cs,0,0,107),      &
 !  38 DD: 17,WD: 17,
 chch_t1(38,'HONO      ',1,'TR        ','          ',1,1,ti+t+st+cs,0,0,107),   &
-chch_t1(38,'HONO      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(38,'HONO      ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 !  39
 chch_t1(39,'C2H6      ',1,'TR        ','          ',0,0,ti+t+st+r+cs,          &
                                                               0,0,107),        &
@@ -400,7 +400,7 @@ chch_t1(54,'MeCOCH2OOH',1,'TR        ','          ',1,1,ti+t+st,0,0,107),      &
 !  55 DD: 25,
 chch_t1(55,'PPAN      ',1,'TR        ','          ',1,0,ti+t+st+cs,0,0,107),   &
 !  56
-chch_t1(56,'MeONO2    ',1,'TR        ','          ',0,0,ti+t+st+cs+mc,0,0,107),&
+chch_t1(56,'MeONO2    ',1,'TR        ','          ',1,0,ti+t+st+cs+mc,0,0,107),&
 !  57
 chch_t1(57,'C5H8      ',1,'TR        ','          ',0,0,ti+st+r+cs,0,0,107),   &
 !  58
@@ -456,7 +456,7 @@ chch_t1(71,'H2        ',1,'CT        ','          ',0,0,ti+t,0,0,107),         &
 ! No dry deposition for MeOH in R scheme. No emissions of MeOH in other schemes.
 ! Note MeOH is emitted as NVOC in ST with aerosols.
 chch_t1(72,'MeOH      ',1,'TR        ','          ',1,1,ti+st,0,0,107),        &
-chch_t1(72,'MeOH      ',1,'TR        ','          ',0,0,mc,0,0,107),           &
+chch_t1(72,'MeOH      ',1,'TR        ','          ',1,1,mc,0,0,107),           &
 chch_t1(72,'MeOH      ',1,'TR        ','          ',0,1,r,0,0,107),            &
 !  72
 chch_t1(72,'MeOH      ',1,'TR        ','          ',1,1,cs,0,0,107),           &
@@ -480,7 +480,7 @@ chch_t1(76,'DMS       ',1,'TR        ','          ',0,0,ti+s+st+ol+r+cs,       &
 !  77 DD: 39,WD: 31,
 chch_t1(77,'SO2       ',1,'TR        ','          ',1,1,ti+s+st+ol+r+cs,       &
                                                                  a,0,107),     &
-chch_t1(77,'SO2       ',1,'TR        ','          ',1,0,mc,a,0,107),           &
+chch_t1(77,'SO2       ',1,'TR        ','          ',1,1,mc,a,0,107),           &
 !  78 DD: 40,
 chch_t1(78,'H2SO4     ',1,'TR        ','          ',1,0,ti+s+st+ol+r+cs+mc,    &
                                                                  a,0,107),     &
@@ -493,7 +493,7 @@ chch_t1(80,'DMSO      ',1,'TR        ','          ',0,1,r,a,0,107),            &
 chch_t1(80,'DMSO      ',1,'TR        ','          ',1,1,ti+st+ol+cs,a,0,107),  &
 !  81 DD: 43,WD: 33,
 chch_t1(81,'NH3       ',1,'TR        ','          ',1,1,ti+st+r+cs,a,0,107),   &
-chch_t1(81,'NH3       ',1,'TR        ','          ',0,0,mc,a,0,107),           &
+chch_t1(81,'NH3       ',1,'TR        ','          ',1,0,mc,a,0,107),           &
 !  82
 chch_t1(82,'CS2       ',1,'TR        ','          ',0,0,ti+s+st+cs+mc,a,0,107),&
 !  83
