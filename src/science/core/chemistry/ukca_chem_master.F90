@@ -103,7 +103,7 @@ INTEGER, PARAMETER :: rm = 1024   ! Used to remove reactions that existed at
                                   ! later ones
 
 ! Define size of master chemistry
-INTEGER, PARAMETER :: n_chch_master = 377 ! number of known species
+INTEGER, PARAMETER :: n_chch_master = 378 ! number of known species
 INTEGER, PARAMETER :: n_het_master  =  18 ! number of heterogeneous reactions
 INTEGER, PARAMETER :: n_dry_master  = 162 ! number of dry deposition reactions
 INTEGER, PARAMETER :: n_wet_master  = 160 ! number of wet deposition reactions
@@ -174,7 +174,7 @@ IF (lhook) CALL dr_hook(ModuleName//':'//RoutineName,zhook_in,zhook_handle)
 ! dry deposition flag, wet deposition flag, scheme,
 ! selection qualifier, deselection / disqualifier, (UM) version when entered
 ! into the master mechanism.
-chch_defs_master(1:169)=[                                                      &
+chch_defs_master(1:170)=[                                                      &
 !   1
 chch_t1( 1,'O(3P)     ',1,'TR        ','Ox        ',0,0,s+st+cs+mc,0,0,107),   &
 !   1
@@ -230,10 +230,11 @@ chch_t1( 9,'HO2NO2    ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 !  10 DD:  7,WD:  5,   (20)
 chch_t1(10,'HONO2     ',1,'TR        ','          ',1,1,ti+s+t+st+r+cs,        &
                                                                 0,0,107),      &
-chch_t1(10,'HONO2     ',1,'TR        ','          ',1,1,mc,0,0,107),           &
+chch_t1(10,'HONO2     ',1,'TR        ','          ',1,0,mc,0,0,107),           &
 !  11 DD:  8,WD:  6,
-chch_t1(11,'H2O2      ',1,'TR        ','          ',1,1,ti+s+t+st+ol+r+cs+mc,  &
+chch_t1(11,'H2O2      ',1,'TR        ','          ',1,1,ti+s+t+st+ol+r+cs,     &
                                                                    0,0,107),   &
+chch_t1(11,'H2O2      ',1,'TR        ','          ',1,0,mc,0,0,107),           &
 !  12
 ! Dry deposition of CH4 not enabled in S and ST schemes.
 chch_t1(12,'CH4       ',1,'TR        ','          ',0,0,s+st+cs,0,ce,107),     &
@@ -265,7 +266,7 @@ chch_t1(15,'MeOO      ',1,'OO        ','          ',0,1,st+cs,rn+rp,0,107),    &
 !  16 DD: 12,WD:  9,
 chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,1,ti+s+t+st+r+cs,        &
     0,0,107),                                                                  &
-chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,1,mc,0,0,107),           &
+chch_t1(16,'MeOOH     ',1,'TR        ','          ',1,0,mc,0,0,107),           &
 !  17
 chch_t1(17,'H         ',1,'TR        ','HOx       ',0,0,s+st+cs+mc,0,0,107),   &
 !  18
@@ -477,8 +478,9 @@ chch_t1(75,'N2        ',1,'TR        ','          ',0,0,mc,0,0,107),           &
 chch_t1(76,'DMS       ',1,'TR        ','          ',0,0,ti+s+st+ol+r+cs,       &
                                                                  a,0,107),     &
 !  77 DD: 39,WD: 31,
-chch_t1(77,'SO2       ',1,'TR        ','          ',1,1,ti+s+st+ol+r+cs+mc,    &
+chch_t1(77,'SO2       ',1,'TR        ','          ',1,1,ti+s+st+ol+r+cs,       &
                                                                  a,0,107),     &
+chch_t1(77,'SO2       ',1,'TR        ','          ',1,0,mc,a,0,107),           &
 !  78 DD: 40,
 chch_t1(78,'H2SO4     ',1,'TR        ','          ',1,0,ti+s+st+ol+r+cs+mc,    &
                                                                  a,0,107),     &
@@ -518,7 +520,7 @@ chch_t1(92,'HO2S      ',1,'SS        ','          ',0,1,t,0,0,107)             &
 
 
 ! Species definitions continued
-chch_defs_master(170:264)=[                                                    &
+chch_defs_master(171:265)=[                                                    &
 !  93
 chch_t1(93,'s-BuOO    ',1,'SS        ','          ',0,0,r,0,0,107),            &
 !  94
@@ -713,7 +715,7 @@ chch_t1(181,'RU10OOH   ',1,'TR        ','          ',1,1,cs,0,0,107)           &
 ]
 
 
-chch_defs_master(265:n_chch_master)=[                                          &
+chch_defs_master(266:n_chch_master)=[                                          &
 ! 182 DD: 94,WD: 69,
 chch_t1(182,'NRU14OOH  ',1,'TR        ','          ',1,1,cs,0,0,107),          &
 ! 183 DD: 95,WD: 70,
@@ -2733,7 +2735,7 @@ ratb_t1(29,'ClO       ','ClO       ','Cl        ','Cl        ','O2        ',   &
 ! B030 JPL2011
 ratb_t1(30,'ClO       ','ClO       ','Cl        ','Cl        ','O2        ',   &
 '          ',3.00e-11,  0.00, 2450.00, 0.00, 0.00, 0.00,0.00,s+st+cs+mc,       &
-                                                                0,0,107),      &
+                                                                0,0,107)       &
 ]
 
 ! Start and end bounds for 2nd section of ratb_defs.
@@ -2951,7 +2953,7 @@ ratb_t1(58,'HO2       ','MeOO      ','HCHO      ','          ','          ',   &
 ! branching-Ratio if asad_bimol detects both reactions
 ratb_t1(59,'HO2       ','MeOO      ','MeOOH     ','          ','          ',   &
 '          ',3.80e-13,  0.00, -780.00, 0.0, 0.0, 0.0, 0.0,ti+t+st+r+cs+mc,     &
-                                                                0,0,107),      &
+                                                                0,0,107)       &
 ]
 
 

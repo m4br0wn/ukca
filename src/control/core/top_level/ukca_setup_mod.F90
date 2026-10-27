@@ -762,7 +762,7 @@ END IF
 
 l_strat_scheme_selected = (ukca_config%i_ukca_chem == i_ukca_chem_strat        &
                       .OR. ukca_config%i_ukca_chem == i_ukca_chem_strattrop    &
-                      .OR. ukca_config%i_ukca_chem == i_ukca_chem_cristrat,    &
+                      .OR. ukca_config%i_ukca_chem == i_ukca_chem_cristrat     &
                       .OR. ukca_config%i_ukca_chem == i_ukca_chem_marschem) 
 
 IF (ukca_config%i_ukca_chem /= i_ukca_chem_off) THEN

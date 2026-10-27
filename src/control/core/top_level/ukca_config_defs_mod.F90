@@ -348,7 +348,7 @@ ELSE IF (ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_strattrop .OR.       &
 
   ! Mars chemistry
   ! =======================
-  IF (ukca_config%l_ukca_marschem) THEN
+  ELSE IF (ukca_config%l_ukca_marschem) THEN
     IF (.NOT. ukca_config%l_ukca_achem) THEN ! NOT using aerosol chemistry
        ! emissions:
       n_chem_emissions = 2
@@ -367,7 +367,7 @@ ELSE IF (ukca_config%l_ukca_strat .OR. ukca_config%l_ukca_strattrop .OR.       &
       n_3d_emissions   = 0       ! volc SO2 & aircraft NOX
       ALLOCATE(em_chem_spec(n_chem_emissions+n_3d_emissions))
       em_chem_spec =                                                           &
-           ['NO        ','CH4        ']
+           ['NO        ','CH4       ']
       ! tracers and reactions:
       n_chem_tracers  = 35
       n_aero_tracers  = 7

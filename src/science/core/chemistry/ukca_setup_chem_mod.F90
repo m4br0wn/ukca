@@ -271,6 +271,17 @@ CASE (i_ukca_chem_cristrat)
     ukca_config%l_ukca_achem     = .TRUE.
     ukca_config%l_ukca_nr_aqchem = .TRUE.
 
+  ELSE
+     ! Can't have trophet reactions without aerosol chemistry
+    IF (ukca_config%l_ukca_trophet) THEN
+      CALL umPrint( 'trop het chem requires aerosol chemistry on',             &
+          src='ukca_setup_chem_mod')
+      cmessage='Unsupported option choice'
+      errcode=ABS(ukca_config%i_ukca_chem)
+      CALL ereport('ukca_setup_chem',errcode,cmessage)
+    END IF
+  END IF
+
   ! Case select for Mars chemistry scheme
 CASE (i_ukca_chem_marschem)
   ukca_config%l_ukca_chem     = .TRUE.
@@ -283,6 +294,7 @@ CASE (i_ukca_chem_marschem)
   IF (ukca_config%l_ukca_chem_aero) THEN
     ukca_config%l_ukca_achem     = .TRUE.
     ukca_config%l_ukca_nr_aqchem = .TRUE.
+  END IF
  
   IF (ukca_config%l_ukca_trophet) THEN
     CALL umPrint( 'Mars chem does not support trop het chem',                  &
@@ -290,17 +302,6 @@ CASE (i_ukca_chem_marschem)
     cmessage='Unsupported option choice'
     errcode=ABS(ukca_config%i_ukca_chem)
     CALL ereport('ukca_setup_chem',errcode,cmessage)
-  END IF
-
-  ELSE
-     ! Can't have trophet reactions without aerosol chemistry
-    IF (ukca_config%l_ukca_trophet) THEN
-      CALL umPrint( 'trop het chem requires aerosol chemistry on',             &
-          src='ukca_setup_chem_mod')
-      cmessage='Unsupported option choice'
-      errcode=ABS(ukca_config%i_ukca_chem)
-      CALL ereport('ukca_setup_chem',errcode,cmessage)
-    END IF
   END IF
 
 
